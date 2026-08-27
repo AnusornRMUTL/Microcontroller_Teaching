@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บทเรียน: การรับ-ส่งข้อมูล (Serial vs Parallel)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Microcontroller</h2>
+            <p>Data Communication</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#intro" class="nav-link active">1. ทฤษฎีการส่งข้อมูล</a>
+            <a href="#simulator" class="nav-link">2. วงจรจำลอง (Simulator)</a>
+            <a href="#quiz" class="nav-link">3. แบบทดสอบท้ายบท</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="../index.html" class="nav-link back-link">← กลับหน้าหลัก</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <!-- Section 1: Introduction -->
+        <section id="intro" class="content-section card">
+            <h2>1. การรับ-ส่งข้อมูล (Data Transfer)</h2>
+            <p>ไมโครคอนโทรลเลอร์ประมวลผลข้อมูลในรูปแบบของ <strong>บิต (Bit)</strong> ซึ่งก็คือสถานะทางไฟฟ้า 0 (LOW) และ 1 (HIGH) เมื่อต้องการส่งข้อมูลไปให้อุปกรณ์อื่น เช่น ส่งตัวอักษร 'A' (มีรหัสฐานสองคือ <code>01000001</code> ขนาด 8-bit) จะมีวิธีการส่งหลักๆ 2 แบบ คือ</p>
+            
+            <div class="theory-grid">
+                <div class="theory-box">
+                    <h3>ขนาน (Parallel) 8-bit</h3>
+                    <p>ส่งข้อมูลทั้ง 8 บิตไปพร้อมๆ กันในครั้งเดียว โดยต้องใช้สายไฟอย่างน้อย 8 เส้น (ไม่รวมสาย GND)</p>
+                    <ul>
+                        <li>✅ <strong>ข้อดี:</strong> ส่งข้อมูลได้เร็วมาก</li>
+                        <li>❌ <strong>ข้อเสีย:</strong> สิ้นเปลืองสายไฟ ไม่เหมาะกับระยะทางไกล เพราะสัญญาณอาจกวนกัน</li>
+                    </ul>
+                </div>
+                <div class="theory-box">
+                    <h3>อนุกรม (Serial)</h3>
+                    <p>ส่งข้อมูลทีละบิต เรียงต่อกันไปตามสายไฟเพียง 1 เส้น (TX ไปยัง RX)</p>
+                    <ul>
+                        <li>✅ <strong>ข้อดี:</strong> ประหยัดสายไฟ ส่งระยะไกลได้ดีเยี่ยม</li>
+                        <li>❌ <strong>ข้อเสีย:</strong> ช้ากว่าแบบขนาน (แต่ในปัจจุบันพัฒนาจนเร็วมากแล้ว)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="theory-commands">
+                <h3>คำสั่ง Arduino ที่เกี่ยวข้อง (Serial)</h3>
+                <ul>
+                    <li><code>Serial.begin(9600);</code> : เปิดใช้งานการสื่อสารอนุกรมที่ความเร็ว 9600 บิตต่อวินาที (Baud rate)</li>
+                    <li><code>Serial.print("A");</code> : ส่งข้อมูลออกไปทางขา TX (Pin 1)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 2: Simulator -->
+        <section id="simulator" class="content-section card">
+            <h2>2. วงจรจำลอง: เปรียบเทียบ Serial และ Parallel</h2>
+            <p>จำลองการส่งข้อมูลตัวอักษร <strong>'A' (01000001)</strong> จาก Arduino เครื่องส่ง ไปยังเครื่องรับ เลือกระบบที่ต้องการทดสอบแล้วกดปุ่ม "ส่งข้อมูล"</p>
+            
+            <div class="simulator-controls">
+                <div class="toggle-container">
+                    <button id="btn-mode-serial" class="mode-btn active">แบบอนุกรม (Serial)</button>
+                    <button id="btn-mode-parallel" class="mode-btn">แบบขนาน (Parallel)</button>
+                </div>
+                <button id="btn-send-data" class="action-btn">📤 ส่งข้อมูล 'A' (01000001)</button>
+            </div>
+
+            <div class="simulator-layout">
+                <!-- SVG Canvas -->
+                <div class="simulator-canvas">
+                    <div class="hardware-container">
+                        <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" id="circuit-svg">
+                            <defs>
+                                <filter id="glow-bit" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="3" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                            </defs>
+                            
+                            <!-- Sender Arduino (Left) -->
+                            <g transform="translate(20, 50)">
+                                <rect x="0" y="0" width="220" height="280" rx="10" fill="#00979C" stroke="#006b6e" stroke-width="3"/>
+                                <text x="110" y="140" fill="white" font-family="Fira Code" font-size="20" font-weight="bold" text-anchor="middle">SENDER</text>
+                                <!-- Pins Header -->
+                                <rect x="180" y="20" width="20" height="240" fill="#222"/>
+                                <!-- Pin Labels -->
+                                <text x="175" y="35" fill="white" font-family="Fira Code" font-size="10" text-anchor="end">TX(1)</text>
+                                <text x="175" y="65" fill="white" font-family="Fira Code" font-size="10" text-anchor="end">D7</text>
+                                <text x="175" y="90" fill="white" font-family="Fira Code" font-size="10" text-anchor="end">D6</text>
+                                <text x="175" y="115" fill="white" font-family="Fira Code" font-size="10" text-anchor="end">D5</text>
+                                <text x="175" y="140" fill="white" font-family="Fira Code" font-size="10" text-anchor="end">D4</text>
+                                <text x="175" y="165" fill="white" font-family="Fira Code" font-size="10" text-anchor="end">D3</text>
+                                <text x="175" y="190" fill="white" font-family="Fira Code" font-size="10" text-anchor="end">D2</text>
+                                <text x="175" y="215" fill="white" font-family="Fira Code" font-size="10" text-anchor="end">D1</text>
+                                <text x="175" y="240" fill="white" font-family="Fira Code" font-size="10" text-anchor="end">D0</text>
+                            </g>
+
+                            <!-- Receiver Arduino (Right) -->
+                            <g transform="translate(560, 50)">
+                                <rect x="0" y="0" width="220" height="280" rx="10" fill="#1e293b" stroke="#334155" stroke-width="3"/>
+                                <text x="110" y="140" fill="white" font-family="Fira Code" font-size="20" font-weight="bold" text-anchor="middle">RECEIVER</text>
+                                <!-- Pins Header -->
+                                <rect x="20" y="20" width="20" height="240" fill="#222"/>
+                                <!-- Pin Labels -->
+                                <text x="45" y="35" fill="white" font-family="Fira Code" font-size="10" text-anchor="start">RX(0)</text>
+                                <text x="45" y="65" fill="white" font-family="Fira Code" font-size="10" text-anchor="start">D7</text>
+                                <text x="45" y="90" fill="white" font-family="Fira Code" font-size="10" text-anchor="start">D6</text>
+                                <text x="45" y="115" fill="white" font-family="Fira Code" font-size="10" text-anchor="start">D5</text>
+                                <text x="45" y="140" fill="white" font-family="Fira Code" font-size="10" text-anchor="start">D4</text>
+                                <text x="45" y="165" fill="white" font-family="Fira Code" font-size="10" text-anchor="start">D3</text>
+                                <text x="45" y="190" fill="white" font-family="Fira Code" font-size="10" text-anchor="start">D2</text>
+                                <text x="45" y="215" fill="white" font-family="Fira Code" font-size="10" text-anchor="start">D1</text>
+                                <text x="45" y="240" fill="white" font-family="Fira Code" font-size="10" text-anchor="start">D0</text>
+                            </g>
+
+                            <!-- Wires Group -->
+                            <g id="wires-container">
+                                <!-- Wires will be dynamically toggled via JS -->
+                                <!-- Serial Wire -->
+                                <path id="wire-serial" d="M 230 80 C 350 80, 450 80, 570 80" fill="none" stroke="#facc15" stroke-width="3" stroke-dasharray="5,5" />
+                                
+                                <!-- Parallel Wires (D7 to D0) -->
+                                <g id="wires-parallel" style="display: none;">
+                                    <path d="M 230 110 L 570 110" fill="none" stroke="#475569" stroke-width="2" class="p-wire" data-bit="7"/>
+                                    <path d="M 230 135 L 570 135" fill="none" stroke="#475569" stroke-width="2" class="p-wire" data-bit="6"/>
+                                    <path d="M 230 160 L 570 160" fill="none" stroke="#475569" stroke-width="2" class="p-wire" data-bit="5"/>
+                                    <path d="M 230 185 L 570 185" fill="none" stroke="#475569" stroke-width="2" class="p-wire" data-bit="4"/>
+                                    <path d="M 230 210 L 570 210" fill="none" stroke="#475569" stroke-width="2" class="p-wire" data-bit="3"/>
+                                    <path d="M 230 235 L 570 235" fill="none" stroke="#475569" stroke-width="2" class="p-wire" data-bit="2"/>
+                                    <path d="M 230 260 L 570 260" fill="none" stroke="#475569" stroke-width="2" class="p-wire" data-bit="1"/>
+                                    <path d="M 230 285 L 570 285" fill="none" stroke="#475569" stroke-width="2" class="p-wire" data-bit="0"/>
+                                </g>
+                            </g>
+
+                            <!-- Data Bits (Animation Layer) -->
+                            <g id="animation-layer"></g>
+
+                        </svg>
+                        
+                        <div class="data-monitor">
+                            <span>ข้อมูลที่รับได้: </span>
+                            <strong id="received-data" class="monitor-text">___</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mock IDE -->
+                <div class="mock-ide">
+                    <div class="ide-header">
+                        <span class="ide-dot red"></span>
+                        <span class="ide-dot yellow"></span>
+                        <span class="ide-dot green"></span>
+                        <span class="ide-title" id="ide-filename">sender_serial.ino</span>
+                    </div>
+                    <pre><code class="language-arduino" id="code-block">
+<span class="code-comment">// โหมด: Serial Communication</span>
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-comment">// เปิดพอร์ตซีเรียล ความเร็ว 9600 bps</span>
+  <span class="code-function">Serial</span>.<span class="code-function">begin</span>(<span class="code-number">9600</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// รอรับคำสั่งให้ส่งข้อมูล</span>
+  <span id="line-send" class="code-line"><span class="code-function">Serial</span>.<span class="code-function">print</span>(<span class="code-string">"A"</span>); <span class="code-comment">// ส่ง 'A' (01000001)</span></span>
+  
+  <span class="code-function">delay</span>(<span class="code-number">1000</span>);
+}
+                    </code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Quiz -->
+        <section id="quiz" class="content-section card">
+            <h2>3. แบบทดสอบท้ายบท (Quiz)</h2>
+            <p>ทดสอบความเข้าใจเกี่ยวกับการรับส่งข้อมูลแบบ Serial และ Parallel</p>
+            
+            <div id="quiz-container" class="quiz-container">
+                <!-- Quiz dynamically injected here by JS -->
+            </div>
+            
+            <div class="quiz-actions">
+                <button id="btn-submit-quiz" class="btn btn-primary">ส่งคำตอบ</button>
+                <button id="btn-retry-quiz" class="btn btn-secondary hidden">กลับไปทำแบบทดสอบใหม่</button>
+            </div>
+            <div id="quiz-result" class="quiz-result hidden"></div>
+        </section>
+
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

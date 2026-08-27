@@ -1,0 +1,190 @@
+Slide 1:
+Analog-to-DigitalConverter (ADC) module
+เรียบเรียงโดย
+นายอนุสรณ์ ยอดใจเพ็ชร
+Slide 2:
+Analog-to-Digital Conversion
+Holding the Sampled Value
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Analog Signal
+Sampling Pulses
+Sampled Data
+
+
+Slide 3:
+Analog-to-Digital Conversion
+Analog-to-Digital Conversion
+
+
+Slide 4:
+Analog input model
+
+
+Slide 5:
+ADC Transfer Function
+
+
+
+
+Slide 6:
+ADC Transfer Function
+
+
+
+
+
+
+
+10 bits
+
+010
+102310
+Slide 7:
+ตัวอย่างที่ 1
+จากรูปวงจรจงแปลงแรงดันที่เข้าขา AN1 เป็นข้อมูลดิจิตอล ขนาด 8 บิต และแสดงค่าแรงดันที่วัดได้ออกทาง PORTB ในรูปแบบเลขฐานสอง
+Slide 8:
+กำหนด PORTB เป็น Output
+ข้อที่ 1 
+Start
+กำหนด AN1 เป็น อินพุตอนะล๊อค 
+ADCON0bits.GO_DONE = 1
+ADCON0bits.GO_DONE == 1
+Yes
+No
+PORTB = ADRESH 
+Delay 100 ms
+Slide 9:
+#include <xc.h>
+#define _XTAL_FREQ 20000000
+#pragma config FOSC = HS, WDTE = OFF, LVP = OFF
+void main(void)
+{  
+    ANSEL = 0b00000010;
+    ANSELH = 0x00;
+    TRISB = 0x00;  
+    PORTB = 0x00;
+    INTCON = 0; 
+    ADCON0 = 0b11000001; 
+    ADCON1 = 0x00;
+    ADCON0bits.CHS = 1;
+    while (1)
+    {
+        ADCON0bits.GO_DONE = 1;
+           while (ADCON0bits.GO_DONE);
+        PORTB = ADRESH;  
+        __delay_ms(100);
+     }
+}
+ตัวอย่างที่ 1 (โปรแกรม)
+Slide 10:
+แบบฝึกหัดที่ 1
+จากวงจรการทดลองโมดูล ADC วงจรที่ 1 จงเขียนโปรแกรมแสดงระดับแรงดันที่เข้าขา AN2 ตามเงื่อนไขในตารางดังต่อไปนี้
+Slide 11:
+ตัวอย่างที่ 2
+จากวงจรการทดลองโมดูล ADC จงเขียนโปรแกรมแสดงระดับแรงดันที่เข้าขา AN1 ออกทาง Serial port เป็นค่าระหว่าง 000 – 255
+Slide 12:
+กำหนดค่า Buad rate
+ข้อที่ 2 
+Start
+กำหนด AN1 เป็น อินพุตอนะล๊อค 
+ADCON0bits.GO_DONE = 1
+ADCON0bits.GO_DONE == 1
+Yes
+No
+1
+2
+Slide 13:
+TXREG = (ADRESH/100) + 48
+ข้อที่ 2 
+delay
+1
+ADRESH = ADRESH - (ADRESH/100)*100
+        TXREG = (ADRESH/10) + 48
+delay
+ADRESH = ADRESH - (ADRESH/10)*10
+delay
+Print new line
+delay
+2
+Slide 14:
+#include <xc.h>
+#define _XTAL_FREQ 20000000
+#pragma config FOSC = HS, WDTE = OFF, LVP = OFF
+
+void main(void)
+{  
+	ANSEL = 0b00000010;
+    ANSELH = 0x00;
+    TRISB = 0x00;  
+    PORTB = 0x00;
+    TRISC = 0b10000000;
+    PORTC = 0x00;
+    
+    // USART module setting.
+    TXSTAbits.SYNC = 0;   
+    TXSTAbits.BRGH = 0;  
+    BAUDCTLbits.BRG16 = 1;      
+    // Baud rate = 9600 bps
+    SPBRGH = 0x00;
+    SPBRG = 0x81;     
+    
+    RCSTAbits.SPEN = 1;
+    RCSTAbits.CREN = 1;
+    TXSTAbits.TXEN = 1;    
+    
+    // ADC Module setting.
+    INTCON = 0; 
+    ADCON0 = 0b11000001; 
+    ADCON1 = 0x00;
+    ADCON0bits.CHS = 1;
+Slide 15:
+ 
+    while (1)
+    {
+        ADCON0bits.GO_DONE = 1;
+        while (ADCON0bits.GO_DONE);
+              
+        TXREG = (ADRESH/100) + 48;
+        while(!TRMT);
+        
+        ADRESH = ADRESH - (ADRESH/100)*100;
+        TXREG = (ADRESH/10) + 48;
+        while(!TRMT);
+        
+        ADRESH = ADRESH - (ADRESH/10)*10;
+        TXREG = ADRESH + 48;
+        
+        // Print new line.
+        TXREG = 0x0D;   while(!TRMT);
+        TXREG = 0x0A;   while(!TRMT);
+        __delay_ms(100);
+     }
+}
+Slide 16:
+แบบฝึกหัดที่ 2
+จากวงจรการทดลองโมดูล ADC จงเขียนโปรแกรมแสดงระดับแรงดันที่เข้าขา AN2 ออกทาง Serial port เป็นค่าระหว่าง 0 Volt – 5 Volt

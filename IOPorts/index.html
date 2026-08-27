@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บทเรียน: Arduino UNO I/O Port</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Microcontroller</h2>
+            <p>Arduino UNO Basics</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#intro" class="nav-link active">1. ทฤษฎี I/O Port</a>
+            <a href="#simulator" class="nav-link">2. วงจรจำลอง (Simulator)</a>
+            <a href="#quiz" class="nav-link">3. แบบทดสอบท้ายบท</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <!-- Section 1: Introduction -->
+        <section id="intro" class="content-section card">
+            <h2>1. ทำความรู้จัก I/O Port (Input / Output)</h2>
+            <p>ไมโครคอนโทรลเลอร์อย่าง <strong>Arduino UNO</strong> สื่อสารกับโลกภายนอกผ่านพอร์ตอินพุตและเอาต์พุต (I/O Ports) ซึ่งเปรียบเสมือนแขนขาที่ใช้รับความรู้สึกและสั่งการ</p>
+            
+            <div class="theory-grid">
+                <div class="theory-box">
+                    <h3>📥 Input (อินพุต)</h3>
+                    <p>รับสัญญาณจากภายนอก เช่น การกดปุ่ม (Push Button), เซ็นเซอร์แสง, เซ็นเซอร์อุณหภูมิ</p>
+                    <code>pinMode(pin, INPUT);</code>
+                </div>
+                <div class="theory-box">
+                    <h3>📤 Output (เอาต์พุต)</h3>
+                    <p>ส่งสัญญาณออกไปควบคุมอุปกรณ์ภายนอก เช่น เปิด/ปิดหลอดไฟ (LED), หมุนมอเตอร์, ส่งเสียงเตือน</p>
+                    <code>pinMode(pin, OUTPUT);</code>
+                </div>
+            </div>
+
+            <div class="theory-commands">
+                <h3>คำสั่งพื้นฐานที่ใช้บ่อย (Digital I/O)</h3>
+                <ul>
+                    <li><code>digitalWrite(pin, HIGH / LOW)</code> : สั่งให้ขาพอร์ตจ่ายไฟ (HIGH = 5V) หรือหยุดจ่ายไฟ (LOW = 0V)</li>
+                    <li><code>digitalRead(pin)</code> : อ่านสถานะของขาพอร์ต ว่ามีไฟเข้า (HIGH) หรือไม่มี (LOW)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 2: Simulator -->
+        <section id="simulator" class="content-section card">
+            <h2>2. วงจรจำลอง: ควบคุม LED ด้วยปุ่มกด</h2>
+            <p>ทดลองกดปุ่มบนวงจรจำลองด้านล่าง เพื่อดูการทำงานของสัญญาณไฟ (กระแสไฟฟ้า) และโค้ด Arduino ที่ทำงานสอดคล้องกัน</p>
+            
+            <div class="simulator-layout">
+                <!-- SVG Canvas -->
+                <div class="simulator-canvas">
+                    <div class="hardware-container">
+                        <!-- Abstract Representation of Arduino & Breadboard -->
+                        <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" id="circuit-svg">
+                            <defs>
+                                <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="5" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                                <filter id="glow-red" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="8" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                            </defs>
+                            
+                            <!-- Arduino UNO Board (Simplified) -->
+                            <rect x="50" y="50" width="300" height="200" rx="10" fill="#00979C" stroke="#006b6e" stroke-width="3"/>
+                            <text x="200" y="160" fill="white" font-family="Fira Code" font-size="24" font-weight="bold" text-anchor="middle">ARDUINO UNO</text>
+                            
+                            <!-- Pins Header -->
+                            <rect x="250" y="40" width="80" height="20" fill="#222"/>
+                            <text x="315" y="55" fill="white" font-family="Fira Code" font-size="10">D13</text>
+                            <text x="260" y="55" fill="white" font-family="Fira Code" font-size="10">D2</text>
+                            
+                            <!-- Breadboard (Simplified) -->
+                            <rect x="400" y="50" width="350" height="200" rx="5" fill="#f0f0f0" stroke="#ccc" stroke-width="2"/>
+                            
+                            <!-- Wires -->
+                            <!-- D13 to LED -->
+                            <path d="M 320 40 L 320 20 L 500 20 L 500 100" fill="none" stroke="#e7352b" stroke-width="4" id="wire-led"/>
+                            <!-- D2 to Button -->
+                            <path d="M 265 40 L 265 30 L 600 30 L 600 100" fill="none" stroke="#2563eb" stroke-width="4" id="wire-btn"/>
+                            <!-- GND to both -->
+                            <path d="M 230 260 L 230 280 L 520 280 L 520 200" fill="none" stroke="#111" stroke-width="4"/>
+                            <path d="M 520 280 L 620 280 L 620 180" fill="none" stroke="#111" stroke-width="4"/>
+                            <text x="230" y="250" fill="white" font-family="Fira Code" font-size="10">GND</text>
+                            <rect x="220" y="250" width="20" height="10" fill="#222"/>
+
+                            <!-- Components -->
+                            <!-- LED -->
+                            <g id="led-group" transform="translate(510, 150)">
+                                <!-- Legs -->
+                                <line x1="-10" y1="0" x2="-10" y2="50" stroke="#888" stroke-width="3"/>
+                                <line x1="10" y1="0" x2="10" y2="50" stroke="#888" stroke-width="3"/>
+                                <!-- Bulb -->
+                                <circle cx="0" cy="0" r="20" fill="#ef4444" opacity="0.6" id="led-bulb" stroke="#991b1b" stroke-width="2"/>
+                                <path d="M -15 0 Q 0 -15 15 0" fill="none" stroke="white" stroke-width="2" opacity="0.5"/>
+                            </g>
+
+                            <!-- Push Button -->
+                            <g id="btn-group" transform="translate(610, 150)">
+                                <rect x="-25" y="-10" width="50" height="40" rx="2" fill="#333"/>
+                                <circle cx="0" cy="10" r="15" fill="#ef4444" id="push-btn-top"/>
+                                <text x="0" y="45" font-family="Sarabun" font-size="12" fill="#555" text-anchor="middle">PUSH</text>
+                            </g>
+                        </svg>
+
+                        <!-- HTML Overlay for actual click interaction -->
+                        <div class="interactive-overlay">
+                            <button id="physical-btn" class="overlay-btn" title="กดปุ่มค้างไว้เพื่อดูผลลัพธ์"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mock IDE -->
+                <div class="mock-ide">
+                    <div class="ide-header">
+                        <span class="ide-dot red"></span>
+                        <span class="ide-dot yellow"></span>
+                        <span class="ide-dot green"></span>
+                        <span class="ide-title">button_led.ino</span>
+                    </div>
+                    <pre><code class="language-arduino" id="code-block">
+<span class="code-comment">// กำหนดขาพอร์ต</span>
+<span class="code-keyword">const int</span> buttonPin = <span class="code-number">2</span>;
+<span class="code-keyword">const int</span> ledPin = <span class="code-number">13</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">setup</span>() {
+  <span class="code-function">pinMode</span>(ledPin, <span class="code-keyword">OUTPUT</span>);
+  <span class="code-function">pinMode</span>(buttonPin, <span class="code-keyword">INPUT</span>);
+}
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-comment">// อ่านสถานะปุ่ม</span>
+  <span id="line-read" class="code-line"><span class="code-keyword">int</span> buttonState = <span class="code-function">digitalRead</span>(buttonPin);</span>
+
+  <span class="code-keyword">if</span> (buttonState == <span class="code-keyword">HIGH</span>) {
+    <span class="code-comment">// ถ้าปุ่มถูกกด (HIGH) ให้เปิด LED</span>
+    <span id="line-high" class="code-line"><span class="code-function">digitalWrite</span>(ledPin, <span class="code-keyword">HIGH</span>);</span>
+  } <span class="code-keyword">else</span> {
+    <span class="code-comment">// ถ้าไม่กด (LOW) ให้ปิด LED</span>
+    <span id="line-low" class="code-line"><span class="code-function">digitalWrite</span>(ledPin, <span class="code-keyword">LOW</span>);</span>
+  }
+}
+                    </code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Quiz -->
+        <section id="quiz" class="content-section card">
+            <h2>3. แบบทดสอบท้ายบท (Quiz)</h2>
+            <p>ทดสอบความเข้าใจเกี่ยวกับการใช้งาน I/O Port ของ Arduino UNO</p>
+            
+            <div id="quiz-container" class="quiz-container">
+                <!-- Quiz dynamically injected here by JS -->
+            </div>
+            
+            <div class="quiz-actions">
+                <button id="btn-submit-quiz" class="btn btn-primary">ส่งคำตอบ</button>
+                <button id="btn-retry-quiz" class="btn btn-secondary hidden">กลับไปทำแบบทดสอบใหม่</button>
+            </div>
+            <div id="quiz-result" class="quiz-result hidden"></div>
+        </section>
+
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

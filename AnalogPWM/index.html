@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog & PWM - Microcontroller Learning</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation (Mock) -->
+        <aside class="sidebar">
+            <h2 class="sidebar-title">Microcontroller</h2>
+            <nav class="sidebar-nav">
+                <a href="../IOPorts/index.html">1. I/O Ports</a>
+                <a href="../DataSerial/index.html">2. Data Serial</a>
+                <a href="../DataTransfer/index.html">3. Data Transfer</a>
+                <a href="index.html" class="active">4. Analog & PWM</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="page-header">
+                <h1>สัญญาณอนาล็อก (Analog) และ PWM</h1>
+                <p>เรียนรู้การอ่านค่าความต่างศักย์แบบต่อเนื่อง และการจำลองสัญญาณอนาล็อกเพื่อหรี่ไฟหรือคุมความเร็วมอเตอร์</p>
+            </header>
+
+            <!-- 1. Introduction (ทฤษฎีและความสำคัญ) -->
+            <section class="section-card theory-section">
+                <h2>1. ทฤษฎีเบื้องต้น (Introduction)</h2>
+                <div class="theory-grid">
+                    <div class="theory-box">
+                        <h3>Analog to Digital Converter (ADC)</h3>
+                        <p>ไมโครคอนโทรลเลอร์ไม่เข้าใจแรงดันไฟฟ้าแบบต่อเนื่อง (Analog) เช่น 0 ถึง 5V จึงต้องแปลงเป็นตัวเลขดิจิทัล (Digital) ผ่านระบบ ADC</p>
+                        <ul>
+                            <li><strong>Arduino Uno:</strong> ความละเอียด 10-bit แปลงแรงดัน 0-5V เป็นตัวเลข <strong>0 ถึง 1023</strong></li>
+                            <li><strong>ขาที่รองรับ:</strong> ขา A0 ถึง A5</li>
+                            <li><strong>คำสั่ง:</strong> <code>analogRead(pin);</code></li>
+                        </ul>
+                    </div>
+                    <div class="theory-box">
+                        <h3>Pulse Width Modulation (PWM)</h3>
+                        <p>การจำลองสัญญาณอนาล็อกเพื่อส่งออกไปยังอุปกรณ์ภายนอก โดยการเปิด/ปิดสัญญาณดิจิทัลด้วยความเร็วสูงสลับกัน (Duty Cycle)</p>
+                        <ul>
+                            <li><strong>Arduino Uno:</strong> ความละเอียด 8-bit ส่งค่า <strong>0 ถึง 255</strong> (0 = 0V, 255 = 5V)</li>
+                            <li><strong>ขาที่รองรับ:</strong> ขาที่มีเครื่องหมาย ~ (เช่น 3, 5, 6, 9, 10, 11)</li>
+                            <li><strong>คำสั่ง:</strong> <code>analogWrite(pin, value);</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Interactive Simulator & Code -->
+            <section class="section-card simulator-section">
+                <h2>2. วงจรจำลอง (Interactive Simulator)</h2>
+                <p>ทดลองเลื่อนแถบสไลด์ (ตัวต้านทานปรับค่าได้) เพื่อดูการเปลี่ยนแปลงของค่า ADC และความสว่างของ LED ผ่าน PWM</p>
+                
+                <div class="simulator-layout">
+                    <!-- Canvas -->
+                    <div class="simulator-canvas">
+                        <div class="canvas-grid-overlay"></div>
+                        
+                        <!-- Potentiometer Mock -->
+                        <div class="component pot-component">
+                            <label for="pot-slider">Potentiometer</label>
+                            <input type="range" id="pot-slider" min="0" max="1023" value="0">
+                            <div class="value-display">ADC: <span id="adc-value-display">0</span></div>
+                        </div>
+
+                        <!-- LED Mock -->
+                        <div class="component led-component">
+                            <div class="led-bulb" id="led-bulb"></div>
+                            <div class="led-base"></div>
+                            <div class="value-display">PWM: <span id="pwm-value-display">0</span></div>
+                        </div>
+
+                        <!-- Decorative Wires -->
+                        <svg class="wire-svg" viewBox="0 0 400 300">
+                            <!-- Wire from Pot to Board -->
+                            <path d="M 120 180 Q 200 150 200 280" class="wire analog-wire" />
+                            <!-- Wire from Board to LED -->
+                            <path d="M 230 280 Q 230 150 280 180" class="wire pwm-wire" />
+                            
+                            <!-- Arduino Mock Box -->
+                            <rect x="170" y="270" width="80" height="30" rx="5" fill="#00979C" />
+                            <text x="210" y="290" fill="white" font-size="12" font-family="monospace" text-anchor="middle">ARDUINO</text>
+                        </svg>
+                    </div>
+
+                    <!-- Editor and Terminal Layout -->
+                    <div class="editor-terminal-layout">
+                        <!-- Code Editor -->
+                        <div class="code-editor">
+                            <div class="code-header">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                                <span class="filename">analog_pwm.ino</span>
+                            </div>
+                            <pre><code><span class="keyword">const int</span> potPin = A0;  <span class="comment">// ขาต่อตัวต้านทานปรับค่าได้</span>
+<span class="keyword">const int</span> ledPin = 9;   <span class="comment">// ขาต่อ LED (ต้องรองรับ PWM ~)</span>
+
+<span class="keyword">int</span> analogValue = 0;
+<span class="keyword">int</span> pwmValue = 0;
+
+<span class="keyword">void setup</span>() {
+  <span class="function">Serial.begin</span>(9600);
+  <span class="function">pinMode</span>(ledPin, <span class="constant">OUTPUT</span>);
+}
+
+<span class="keyword">void loop</span>() {
+  <span class="comment">// 1. อ่านค่า ADC (0 - 1023)</span>
+  analogValue = <span class="function">analogRead</span>(potPin);
+  
+  <span class="comment">// 2. แปลงช่วงค่าจาก 0-1023 ให้เป็น 0-255</span>
+  pwmValue = <span class="function">map</span>(analogValue, 0, 1023, 0, 255);
+  
+  <span class="comment">// 3. สั่งงาน LED ด้วย PWM</span>
+  <span class="function">analogWrite</span>(ledPin, pwmValue);
+  
+  <span class="comment">// พิมพ์ค่าออก Serial Monitor</span>
+  <span class="function">Serial.print</span>(<span class="string">"ADC: "</span>);
+  <span class="function">Serial.print</span>(analogValue);
+  <span class="function">Serial.print</span>(<span class="string">" | PWM: "</span>);
+  <span class="function">Serial.println</span>(pwmValue);
+  
+  <span class="function">delay</span>(10);
+}</code></pre>
+                        </div>
+                        
+                        <!-- Serial Terminal (กรอบสีแดง) -->
+                        <div class="serial-terminal">
+                            <div class="terminal-header">
+                                <span>Serial Monitor</span>
+                                <button id="clear-terminal-btn" class="clear-btn">Clear</button>
+                            </div>
+                            <div class="terminal-content" id="serial-output"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. End-of-Lesson Quiz -->
+            <section class="section-card quiz-section">
+                <h2>3. แบบทดสอบท้ายบท (Quiz)</h2>
+                <div id="quiz-container">
+                    <!-- Quiz will be injected here via JavaScript -->
+                </div>
+                <div class="quiz-controls">
+                    <button id="submit-quiz-btn" class="btn primary-btn">ส่งคำตอบ (Submit)</button>
+                    <button id="retry-quiz-btn" class="btn secondary-btn hidden">กลับไปทำแบบทดสอบใหม่ (Retry)</button>
+                </div>
+                <div id="quiz-result" class="quiz-result hidden"></div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เทคโนโลยีไมโครคอนโทรลเลอร์ - Microcontroller Technology</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2196F3;
+            --secondary-color: #FF9800;
+            --tertiary-color: #4CAF50;
+            --light-bg: #F5F7FA;
+            --white: #FFFFFF;
+            --dark-text: #2C3E50;
+            --accent-1: #00BCD4;
+            --accent-2: #E91E63;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #F5F7FA 0%, #E3F2FD 100%);
+            color: var(--dark-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header Navigation */
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-1) 100%);
+            color: var(--white);
+            padding: 1rem 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-1) 100%);
+            color: var(--white);
+            padding: 80px 20px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            animation: slideInUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: slideInUp 0.8s ease-out 0.4s both;
+            line-height: 1.8;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: slideInUp 0.8s ease-out 0.6s both;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--white);
+            color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+        }
+
+        .btn-secondary:hover {
+            background: var(--white);
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Course Info Section */
+        .course-info {
+            max-width: 1200px;
+            margin: -40px auto 40px;
+            padding: 40px;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            animation: slideInUp 0.8s ease-out 0.3s both;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--light-bg);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(33, 150, 243, 0.15);
+        }
+
+        .info-card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card p {
+            color: var(--dark-text);
+            font-size: 0.95rem;
+        }
+
+        /* Course Description */
+        .course-description {
+            background: var(--white);
+            padding: 40px;
+            margin-bottom: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            animation: slideInUp 0.8s ease-out 0.4s both;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .course-description p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            color: var(--dark-text);
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(255, 152, 0, 0.2), rgba(76, 175, 80, 0.2));
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        /* Credit Table */
+        .credit-table {
+            width: 100%;
+            margin-bottom: 2rem;
+            border-collapse: collapse;
+            background: var(--white);
+        }
+
+        .credit-table th {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-1) 100%);
+            color: var(--white);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .credit-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .credit-table tr:hover {
+            background: var(--light-bg);
+        }
+
+        .credit-table tr:nth-child(even) {
+            background: var(--light-bg);
+        }
+
+        /* Modules Section */
+        .modules-section {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            animation: slideInUp 0.8s ease-out 0.5s both;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .module-card {
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-bg) 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .module-card:nth-child(2) {
+            border-left-color: var(--secondary-color);
+        }
+
+        .module-card:nth-child(3) {
+            border-left-color: var(--tertiary-color);
+        }
+
+        .module-card:nth-child(4) {
+            border-left-color: var(--accent-2);
+        }
+
+        .module-card:nth-child(5) {
+            border-left-color: #8b5cf6;
+        }
+
+        .module-card:nth-child(6) {
+            border-left-color: #06b6d4;
+        }
+
+        .module-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .module-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-1) 100%);
+            color: var(--white);
+        }
+
+        .module-card:nth-child(2) .module-header {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #FFB74D 100%);
+        }
+
+        .module-card:nth-child(3) .module-header {
+            background: linear-gradient(135deg, var(--tertiary-color) 0%, #81C784 100%);
+        }
+
+        .module-card:nth-child(4) .module-header {
+            background: linear-gradient(135deg, var(--accent-2) 0%, #F06292 100%);
+        }
+
+        .module-card:nth-child(5) .module-header {
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+        }
+
+        .module-card:nth-child(6) .module-header {
+            background: linear-gradient(135deg, #06b6d4 0%, #38bdf8 100%);
+        }
+
+        .module-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-header h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-body {
+            padding: 20px;
+        }
+
+        .module-description {
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .module-topics {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .module-topics li {
+            padding: 5px 0;
+            color: var(--dark-text);
+            font-size: 0.9rem;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .module-topics li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .module-card:nth-child(2) .module-topics li:before {
+            color: var(--secondary-color);
+        }
+
+        .module-card:nth-child(3) .module-topics li:before {
+            color: var(--tertiary-color);
+        }
+
+        .module-card:nth-child(4) .module-topics li:before {
+            color: var(--accent-2);
+        }
+
+        .module-card:nth-child(5) .module-topics li:before {
+            color: #8b5cf6;
+        }
+
+        .module-card:nth-child(6) .module-topics li:before {
+            color: #06b6d4;
+        }
+
+        .module-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-1) 100%);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .module-card:nth-child(2) .module-link {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #FFB74D 100%);
+        }
+
+        .module-card:nth-child(3) .module-link {
+            background: linear-gradient(135deg, var(--tertiary-color) 0%, #81C784 100%);
+        }
+
+        .module-card:nth-child(4) .module-link {
+            background: linear-gradient(135deg, var(--accent-2) 0%, #F06292 100%);
+        }
+
+        .module-card:nth-child(5) .module-link {
+            background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+        }
+
+        .module-card:nth-child(6) .module-link {
+            background: linear-gradient(135deg, #06b6d4 0%, #38bdf8 100%);
+        }
+
+        .module-link:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Objectives Section */
+        .objectives-section {
+            background: var(--white);
+            padding: 40px;
+            margin-bottom: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            animation: slideInUp 0.8s ease-out 0.6s both;
+        }
+
+        .objectives-list {
+            list-style: none;
+        }
+
+        .objectives-list li {
+            padding: 15px;
+            margin-bottom: 1rem;
+            background: var(--light-bg);
+            border-radius: 10px;
+            padding-left: 50px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .objectives-list li:hover {
+            background: #E1F5FE;
+            transform: translateX(10px);
+        }
+
+        .objectives-list li:before {
+            content: counter(item);
+            counter-increment: item;
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            background: var(--primary-color);
+            color: var(--white);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .objectives-list {
+            counter-reset: item;
+        }
+
+        /* Tools Section */
+        .tools-section {
+            background: linear-gradient(135deg, var(--light-bg) 0%, var(--white) 100%);
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            animation: slideInUp 0.8s ease-out 0.7s both;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tool-item {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .tool-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(33, 150, 243, 0.2);
+        }
+
+        .tool-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .tool-item h3 {
+            color: var(--dark-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .tool-item p {
+            color: var(--dark-text);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--dark-text) 0%, #1A252F 100%);
+            color: var(--white);
+            padding: 40px 20px;
+            text-align: center;
+            animation: slideUp 0.6s ease-out 0.8s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-content p {
+            margin-bottom: 10px;
+        }
+
+        .footer-links {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--white);
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 0.7;
+        }
+
+        /* Pulse Animation for CTA */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(33, 150, 243, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(33, 150, 243, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(33, 150, 243, 0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .course-info {
+                margin: -30px 20px 30px;
+                padding: 20px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .credit-table {
+                font-size: 0.9rem;
+            }
+
+            .credit-table th,
+            .credit-table td {
+                padding: 10px;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .module-card {
+                margin-bottom: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .hero {
+                padding: 50px 20px;
+            }
+
+            .course-description,
+            .modules-section,
+            .objectives-section,
+            .tools-section {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .logo {
+                font-size: 1.3rem;
+            }
+
+            .logo-icon {
+                font-size: 1.8rem;
+            }
+
+            nav ul {
+                gap: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .hero-description {
+                font-size: 1rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header>
+        <nav>
+            <div class="logo">
+                <span class="logo-icon">⚙️</span>
+                <span>Microcontroller</span>
+            </div>
+            <ul>
+                <li><a href="#courses">หลักสูตร</a></li>
+                <li><a href="#modules">บทเรียน</a></li>
+                <li><a href="#tools">เครื่องมือ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>🔌 เทคโนโลยีไมโครคอนโทรลเลอร์</h1>
+            <p class="hero-subtitle">Microcontroller Technology (DIPET407)</p>
+            <p class="hero-description">
+                เรียนรู้เกี่ยวกับการออกแบบ การเขียนโปรแกรม และการประยุกต์ใช้ไมโครคอนโทรลเลอร์ด้วย Arduino IDE และ ESP32 สำหรับสาขาวิศวกรรมศาสตร์อิเล็กทรอนิกส์อัตโนมัติ (ปวส.)
+            </p>
+            <div class="cta-buttons">
+                <a href="#modules" class="btn btn-primary">เริ่มเรียนรู้</a>
+                <a href="Couse.pdf" class="btn btn-secondary">ดูหลักสูตร PDF</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Course Info Card -->
+    <section class="course-info" id="courses">
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-card-icon">📚</div>
+                <h3>รหัสวิชา</h3>
+                <p>DIPET407</p>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon">⏱️</div>
+                <h3>หน่วยกิต</h3>
+                <p>3 หน่วยกิต</p>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon">🎓</div>
+                <h3>สาขาวิชา</h3>
+                <p>อิเล็กทรอนิกส์อัตโนมัติ</p>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon">🔧</div>
+                <h3>เครื่องมือหลัก</h3>
+                <p>Arduino IDE & ESP32</p>
+            </div>
+        </div>
+
+        <!-- Credit Table -->
+        <h3 style="margin-top: 2rem; color: var(--primary-color);">📊 รายละเอียดหน่วยกิต</h3>
+        <table class="credit-table">
+            <thead>
+                <tr>
+                    <th>รายละเอียด</th>
+                    <th>ชั่วโมง/สัปดาห์</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>📖 บรรยาย (Lecture)</td>
+                    <td>2 ชั่วโมง</td>
+                </tr>
+                <tr>
+                    <td>🔬 ปฏิบัติการ (Laboratory)</td>
+                    <td>3 ชั่วโมง</td>
+                </tr>
+                <tr>
+                    <td>🏠 ศึกษาด้วยตนเอง (Self-Study)</td>
+                    <td>5 ชั่วโมง</td>
+                </tr>
+                <tr style="font-weight: bold; background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(0, 188, 212, 0.1) 100%);">
+                    <td>รวมทั้งสิ้น</td>
+                    <td>10 ชั่วโมง/สัปดาห์</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Course Description -->
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+        <section class="course-description">
+            <h2 class="section-title">📝 คำอธิบายรายวิชา</h2>
+            <p>
+                ศึกษาและปฏิบัติเกี่ยวกับ <span class="highlight">โครงสร้างสถาปัตยกรรมของไมโครคอนโทรลเลอร์</span> ลักษณะสัญญาณและกระบวนการทำงาน การรับ-ส่งข้อมูลกับอุปกรณ์เชื่อมต่อภายนอก ชุดคำสั่งและการเขียนโปรแกรม การวัดและทดสอบวงจรใช้งานไมโครคอนโทรลเลอร์ และการประยุกต์ใช้งานในโลกจริง
+            </p>
+        </section>
+
+        <!-- Course Objectives -->
+        <section class="objectives-section">
+            <h2 class="section-title">🎯 จุดประสงค์รายวิชา</h2>
+            <ul class="objectives-list">
+                <li><strong>เข้าใจ</strong> เกี่ยวกับโครงสร้างและหลักการทำงานของไมโครคอนโทรลเลอร์</li>
+                <li><strong>สามารถ</strong> เขียนโปรแกรมควบคุม ทดสอบการทำงาน และประยุกต์ใช้งานไมโครคอนโทรลเลอร์</li>
+                <li><strong>มีเจตคติและกิจนิสัยที่ดี</strong> ในการทำงานด้วยความละเอียดรอบคอบ ปลอดภัย เป็นระเบียบ สะอาด ตรงต่อเวลา มีความซื่อสัตย์ และรักษาสภาพแวดล้อม</li>
+            </ul>
+        </section>
+
+        <!-- Learning Modules -->
+        <section class="modules-section" id="modules">
+            <h2 class="section-title">📚 บทเรียนเชิงโต้ตอบ (Interactive Learning Modules)</h2>
+            <div class="modules-grid">
+                <!-- Module 1 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">💻</div>
+                        <h3>พื้นฐานภาษา C สำหรับ Arduino</h3>
+                        <p>C Language & Arduino IDE</p>
+                    </div>
+                    <div class="module-body">
+                        <p class="module-description">เรียนรู้โครงสร้างไวยากรณ์ภาษา C/C++ ตัวแปร ชนิดข้อมูล คำสั่งเงื่อนไข ฟังก์ชัน และไลบรารีสำหรับไมโครคอนโทรลเลอร์</p>
+                        <ul class="module-topics">
+                            <li>ตัวแปรและชนิดข้อมูล (Data Types)</li>
+                            <li>อาร์เรย์และการประมวลผลคณิตศาสตร์</li>
+                            <li>โครงสร้างควบคุม If-Else / Switch-Case</li>
+                            <li>การเขียนฟังก์ชันและการเรียกใช้ไลบรารี</li>
+                        </ul>
+                        <a href="C_And_Arduino/index.html" class="module-link">🎓 เข้าสู่บทเรียน →</a>
+                    </div>
+                </div>
+
+                <!-- Module 2 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">🔌</div>
+                        <h3>พอร์ตอินพุต/เอาต์พุตดิจิทัล</h3>
+                        <p>Digital I/O Ports</p>
+                    </div>
+                    <div class="module-body">
+                        <p class="module-description">เรียนรู้พื้นฐานการใช้งานขาพอร์ตดิจิทัลของ Arduino Uno ทฤษฎีสัญญาณดิจิทัล และการเขียนโปรแกรมสั่งอ่านเขียนข้อมูล</p>
+                        <ul class="module-topics">
+                            <li>โครงสร้างสถาปัตยกรรมพอร์ต</li>
+                            <li>ทฤษฎีสัญญาณ HIGH/LOW</li>
+                            <li>คำสั่ง pinMode, digitalWrite, digitalRead</li>
+                            <li>วงจรปุ่มกดและ LED</li>
+                        </ul>
+                        <a href="IOPorts/index.html" class="module-link">🎓 เข้าสู่บทเรียน →</a>
+                    </div>
+                </div>
+
+                <!-- Module 3 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">⚡</div>
+                        <h3>การแปลงสัญญาณแอนะล็อกเป็นดิจิทัล</h3>
+                        <p>Analog-to-Digital Converter (ADC)</p>
+                    </div>
+                    <div class="module-body">
+                        <p class="module-description">ทำความเข้าใจหลักการทำงานของโมดูล ADC สัญญาณไฟฟ้าต่อเนื่อง การคำนวณ Resolution และแรงดันอ้างอิง</p>
+                        <ul class="module-topics">
+                            <li>หลักการสุ่มและแปลงสัญญาณ (Sampling & Quantization)</li>
+                            <li>ADC Resolution & Reference Voltage</li>
+                            <li>การอ่านค่าจากเซนเซอร์แรงดันแอนะล็อก</li>
+                            <li>การแปลงค่าดิจิทัลกลับเป็นค่าจริง</li>
+                        </ul>
+                        <a href="ADC/index.html" class="module-link">🎓 เข้าสู่บทเรียน →</a>
+                    </div>
+                </div>
+
+                <!-- Module 4 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">📈</div>
+                        <h3>สัญญาณแอนะล็อก & PWM</h3>
+                        <p>Analog Signals & PWM</p>
+                    </div>
+                    <div class="module-body">
+                        <p class="module-description">ศึกษาความแตกต่างระหว่างสัญญาณดิจิทัลและแอนะล็อก และการใช้ PWM เพื่อจำลองเอาต์พุตแอนะล็อก</p>
+                        <ul class="module-topics">
+                            <li>ทฤษฎีสัญญาณแอนะล็อก vs ดิจิทัล</li>
+                            <li>Duty Cycle และ Pulse Width Modulation</li>
+                            <li>การหรี่ไฟ LED และควบคุมความเร็วมอเตอร์</li>
+                            <li>คำสั่ง analogRead, analogWrite</li>
+                        </ul>
+                        <a href="AnalogPWM/index.html" class="module-link">🎓 เข้าสู่บทเรียน →</a>
+                    </div>
+                </div>
+
+                <!-- Module 5 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">📤</div>
+                        <h3>การรับ-ส่งข้อมูล</h3>
+                        <p>Parallel vs Serial Transfer</p>
+                    </div>
+                    <div class="module-body">
+                        <p class="module-description">เข้าใจแนวคิดการรับ-ส่งข้อมูลแบบขนานและแบบอนุกรม ศึกษาคำสั่ง Serial Communication พื้นฐาน</p>
+                        <ul class="module-topics">
+                            <li>การจัดรูปแบบบิตข้อมูล</li>
+                            <li>การรับ-ส่งแบบขนาน (Parallel)</li>
+                            <li>การรับ-ส่งแบบอนุกรม (Serial)</li>
+                            <li>คำสั่ง Serial.begin, Serial.print</li>
+                        </ul>
+                        <a href="DataTransfer/index.html" class="module-link">🎓 เข้าสู่บทเรียน →</a>
+                    </div>
+                </div>
+
+                <!-- Module 6 -->
+                <div class="module-card">
+                    <div class="module-header">
+                        <div class="module-icon">🔗</div>
+                        <h3>โปรโตคอลสื่อสาร</h3>
+                        <p>I2C & SPI Communication</p>
+                    </div>
+                    <div class="module-body">
+                        <p class="module-description">เรียนรู้โปรโตคอลการสื่อสารระดับสูง I2C และ SPI สำหรับการเชื่อมต่ออุปกรณ์ต่างๆ</p>
+                        <ul class="module-topics">
+                            <li>โครงสร้างบัส I2C (SDA, SCL)</li>
+                            <li>ระบบ Master-Slave</li>
+                            <li>โครงสร้างบัส SPI (SCK, MOSI, MISO)</li>
+                            <li>การเลือกอุปกรณ์ (Addressing)</li>
+                        </ul>
+                        <a href="DataSerial/index.html" class="module-link">🎓 เข้าสู่บทเรียน →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tools Section -->
+        <section class="tools-section" id="tools">
+            <h2 class="section-title">🛠️ เครื่องมือและอุปกรณ์หลัก</h2>
+            <div class="tools-grid">
+                <div class="tool-item">
+                    <div class="tool-icon">⚙️</div>
+                    <h3>Arduino IDE</h3>
+                    <p>แพลตฟอร์มการเขียนโปรแกรมแบบโอเพนซอร์สสำหรับการพัฒนาไมโครคอนโทรลเลอร์</p>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon">📱</div>
+                    <h3>ESP32 DevKit</h3>
+                    <p>ไมโครคอนโทรลเลอร์ที่ผ่านการปรับปรุง พร้อม Wi-Fi และ Bluetooth สำหรับโครงการจริง</p>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon">🔧</div>
+                    <h3>บอร์ดทดลอง</h3>
+                    <p>Breadboard สำหรับการต่ออุปกรณ์และวงจรทดลองโดยไม่ต้อง焊 (Soldering)</p>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-icon">💡</div>
+                    <h3>อุปกรณ์ต่างๆ</h3>
+                    <p>LED, ปุ่มกด, เซนเซอร์ต่างๆ สำหรับสร้างโครงการทดลอง</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Additional Resources -->
+        <section class="objectives-section" style="margin-bottom: 0;">
+            <h2 class="section-title">💡 สมรรถนะที่คาดหวัง</h2>
+            <ul class="objectives-list">
+                <li>แสดงความรู้เกี่ยวกับการออกแบบวงจรใช้งานไมโครคอนโทรลเลอร์</li>
+                <li>ออกแบบ ประกอบ และติดตั้งระบบควบคุมที่ใช้ไมโครคอนโทรลเลอร์</li>
+                <li>เขียนโปรแกรมควบคุมไมโครคอนโทรลเลอร์ด้วยภาษา C++</li>
+                <li>ทดสอบและบำรุงรักษาอุปกรณ์วงจรไมโครคอนโทรลเลอร์</li>
+                <li>ประยุกต์ใช้งานไมโครคอนโทรลเลอร์ในงานจริง</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3>📚 เทคโนโลยีไมโครคอนโทรลเลอร์</h3>
+            <p>Microcontroller Technology | DIPET407</p>
+            <p>สาขาวิศวกรรมศาสตร์ - อิเล็กทรอนิกส์อัตโนมัติ (ปวส.)</p>
+            <div class="footer-links">
+                <a href="Couse.md">ไฟล์หลักสูตร</a>
+                <a href="GEMINI.md">แนวทางการออกแบบ</a>
+                <a href="#courses">กลับไปด้านบน ⬆️</a>
+            </div>
+            <p style="margin-top: 20px; opacity: 0.8;">© 2025 Interactive Learning Platform | Created with ❤️ for Students</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function (entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.module-card, .info-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
