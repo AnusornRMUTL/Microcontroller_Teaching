@@ -284,7 +284,9 @@ function setupNavigation() {
     const navItems = document.querySelectorAll('#nav-menu li');
     navItems.forEach(item => {
         item.addEventListener('click', () => {
-            document.querySelector('#nav-menu li.active').classList.remove('active');
+            if (!item.dataset.section) return; // Let default behavior happen (e.g. for Back to Home link)
+            const activeLi = document.querySelector('#nav-menu li.active');
+            if (activeLi) activeLi.classList.remove('active');
             item.classList.add('active');
             renderSection(item.dataset.section);
         });
@@ -682,13 +684,13 @@ window.generateCertificate = function() {
 
     ctx.font = 'bold 28px "Sarabun", sans-serif';
     ctx.fillStyle = '#ef4444'; 
-    ctx.fillText(\`ด้วยคะแนน \${userScore}/10 (\${userScore*10}%)\`, canvas.width/2, 420);
+    ctx.fillText(`ด้วยคะแนน ${userScore}/10 (${userScore*10}%)`, canvas.width/2, 420);
 
     const today = new Date();
     const dateStr = today.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
     ctx.font = '18px "Sarabun", sans-serif';
     ctx.fillStyle = '#64748b';
-    ctx.fillText(\`วันที่ผ่านการทดสอบ: \${dateStr}\`, canvas.width/2, 480);
+    ctx.fillText(`วันที่ผ่านการทดสอบ: ${dateStr}`, canvas.width/2, 480);
 
     ctx.beginPath();
     ctx.moveTo(canvas.width/2 - 120, 520);
@@ -700,6 +702,6 @@ window.generateCertificate = function() {
     document.getElementById('cert-container').style.display = 'block';
 
     const link = document.getElementById('cert-download');
-    link.download = \`Certificate_\${nameInput.replace(/\\s+/g, '_')}.png\`;
+    link.download = `Certificate_${nameInput.replace(/\s+/g, '_')}.png`;
     link.href = canvas.toDataURL('image/png');
 };

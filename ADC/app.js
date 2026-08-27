@@ -11,6 +11,9 @@ function initNavigation() {
 
     links.forEach(link => {
         link.addEventListener('click', (e) => {
+            const targetId = link.getAttribute('data-target');
+            if (!targetId) return; // Let default navigation happen for external links (like Back to Home)
+            
             e.preventDefault();
             links.forEach(l => l.classList.remove('active'));
             sections.forEach(s => s.classList.remove('active'));

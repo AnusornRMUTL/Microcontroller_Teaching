@@ -695,7 +695,9 @@ function setupNavigation() {
     const navItems = document.querySelectorAll('#nav-menu li');
     navItems.forEach(item => {
         item.addEventListener('click', () => {
-            document.querySelector('#nav-menu li.active').classList.remove('active');
+            if (!item.dataset.section) return; // Let default behavior happen (e.g. for Back to Home link)
+            const activeLi = document.querySelector('#nav-menu li.active');
+            if (activeLi) activeLi.classList.remove('active');
             item.classList.add('active');
             renderSection(item.dataset.section);
         });
@@ -1029,7 +1031,7 @@ async function renderQuizHTML(container) {
         <div id="quiz-list" style="margin-top: 25px;">`;
 
     currentQuizSession.forEach((q, i) => {
-        html += `<div class="quiz-question" id="q-block-${i}" style="margin-bottom: 25px; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; background: #fff;">
+        html += `<div class="quiz-question" id="q-block-${i}" style="margin-bottom: 25px; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; background: #fff; color: #333;">
             <p style="font-weight: 600; font-size: 1.1rem; margin-bottom: 15px; color: #1e293b;">ข้อ ${i + 1}: ${q.question}</p>
             <div class="quiz-options">`;
         q.options.forEach((opt, j) => {
