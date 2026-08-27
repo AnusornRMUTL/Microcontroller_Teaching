@@ -127,6 +127,24 @@ ul.feature-list {
     }
 }
 
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+    }
+    .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
 .intro-diagram {
     background-color: #0f172a;
     background-image: radial-gradient(#334155 1px, transparent 1px);
