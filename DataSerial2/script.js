@@ -485,7 +485,85 @@ const contentData = {
                 <p style="margin-bottom: 5px;">1. <strong>Master</strong> ส่ง Request Frame → ระบุ Slave Address + Function Code + Data + CRC</p>
                 <p style="margin-bottom: 5px;">2. <strong>Slave</strong> ที่มี Address ตรง จะประมวลผลและส่ง Response Frame กลับ</p>
                 <p style="margin-bottom: 5px;">3. Slave ที่ Address ไม่ตรงจะ <strong>ไม่ทำอะไรเลย</strong> (เงียบ)</p>
-                <p style="margin-bottom: 0;">4. หากไม่มี Slave ตอบกลับภายในเวลาที่กำหนด → Master จะถือว่าเกิด <strong>Timeout Error</strong></p>
+                <p style="margin-bottom: 0;">4. <strong>3.5 Char Silence (Timeout):</strong> การเริ่มต้นและสิ้นสุด Frame ต้องมีช่วงเวลาเงียบอย่างน้อย 3.5 ตัวอักษร เช่น ที่ 9600 bps คือ ~4.01 ms</p>
+            </div>
+
+            <!-- MAX485 Direction Control Guide -->
+            <div style="margin-top: 15px; padding: 15px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+                <h4 style="color: #15803d; margin-bottom: 5px;">🛠️ เคล็ดลับช่าง: การควบคุมทิศทางโมดูล MAX485 (ขา DE และ RE)</h4>
+                <p style="font-size: 0.9rem; margin-bottom: 8px;">เนื่องจาก RS485 ทำงานแบบ Half-Duplex โมดูล MAX485 จึงมีขาควบคุมทิศทาง:</p>
+                <ul style="font-size: 0.88rem; margin-left: 20px; line-height: 1.6;">
+                    <li><strong>DE (Driver Enable) & RE (Receiver Enable):</strong> มักมัดรวมต่อเข้าขา Digital ขาเดียวกันของไมโครคอนโทรลเลอร์</li>
+                    <li><strong>เมื่อต้องการส่ง (Transmit):</strong> สั่งขาเป็น <code>HIGH</code></li>
+                    <li><strong>เมื่อส่งเสร็จ:</strong> <strong>ต้องสั่ง <code>Serial.flush();</code> ก่อน</strong> เพื่อรอให้ไบต์สุดท้ายออกจาก Hardware Buffer จนหมด แล้วจึงสั่งขากลับเป็น <code>LOW</code> เพื่อเข้าสู่โหมดรับ!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Master Comparison Summary Table -->
+        <div class="card">
+            <h2>📊 ตารางเปรียบเทียบมาตรฐานการสื่อสารยอดนิยม (Master Summary Table)</h2>
+            <div style="overflow-x: auto; margin-top: 15px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+                    <thead>
+                        <tr style="background: #1e293b; color: white;">
+                            <th style="padding: 10px;">มาตรฐาน</th>
+                            <th style="padding: 10px;">ระดับแรงดัน</th>
+                            <th style="padding: 10px;">ลักษณะสัญญาณ</th>
+                            <th style="padding: 10px;">ระยะทางสูงสุด</th>
+                            <th style="padding: 10px;">จำนวนอุปกรณ์</th>
+                            <th style="padding: 10px;">โหมด Duplex</th>
+                            <th style="padding: 10px;">สายสัญญาณหลัก</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #e2e8f0; background: #fdf2f8;">
+                            <td style="padding: 8px; font-weight: bold; color: var(--uart-color);">UART (TTL)</td>
+                            <td>0V / 5V (หรือ 3.3V)</td>
+                            <td>Single-ended</td>
+                            <td>&lt; 1 - 2 เมตร</td>
+                            <td>2 ตัว (Point-to-Point)</td>
+                            <td>Full-Duplex</td>
+                            <td>Tx, Rx, GND (3 เส้น)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e2e8f0; background: #f0f9ff;">
+                            <td style="padding: 8px; font-weight: bold; color: var(--rs232-color);">RS232</td>
+                            <td>-12V (Logic 1) / +12V (Logic 0)</td>
+                            <td>Single-ended (Invert)</td>
+                            <td>~ 15 เมตร</td>
+                            <td>2 ตัว (Point-to-Point)</td>
+                            <td>Full-Duplex</td>
+                            <td>Tx, Rx, GND (3 เส้น)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e2e8f0; background: #fffbeb;">
+                            <td style="padding: 8px; font-weight: bold; color: var(--rs485-color);">RS485</td>
+                            <td>-7V ถึง +12V (ผลต่าง A-B)</td>
+                            <td>Differential (+/-)</td>
+                            <td><strong>1,200 เมตร</strong></td>
+                            <td><strong>32 - 128 ตัว</strong></td>
+                            <td>Half-Duplex</td>
+                            <td>A, B (2 เส้น) + Shield</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                            <td style="padding: 8px; font-weight: bold; color: #00979C;">I2C</td>
+                            <td>0V / 3.3V หรือ 5V</td>
+                            <td>Open-Drain (Pull-up)</td>
+                            <td>&lt; 1 เมตร (บนบอร์ด)</td>
+                            <td>127 ตัว (Address 7-bit)</td>
+                            <td>Half-Duplex</td>
+                            <td>SDA, SCL (2 เส้น)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; font-weight: bold; color: #8b5cf6;">SPI</td>
+                            <td>0V / 3.3V หรือ 5V</td>
+                            <td>Single-ended (Push-pull)</td>
+                            <td>&lt; 0.5 เมตร (ความเร็วสูง)</td>
+                            <td>ขึ้นกับจำนวนขา CS</td>
+                            <td>Full-Duplex</td>
+                            <td>MOSI, MISO, SCK, CS (4+ เส้น)</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     `,

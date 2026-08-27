@@ -635,10 +635,32 @@
                         </div>
                     </div>
                     <div class="formula-box">
-                        <div class="formula-title">สูตรคำนวณ Transfer Function:</div>
+                        <div class="formula-title">1. สูตรคำนวณแปลงแรงดันเป็นค่า ADC (ADC Conversion):</div>
                         ADC_Value = ( V_in / V_ref ) x ( 2^n - 1 )
                     </div>
                     <p><strong>ตัวอย่าง ESP32 (n=12 bit, V_ref=3.3V):</strong> ถ้า V_in = 1.65V — ADC_Value = (1.65 / 3.3) x 4095 = <strong>2047</strong></p>
+
+                    <div class="formula-box" style="border-left-color: #10b981; margin-top: 15px;">
+                        <div class="formula-title">2. สูตรแปลงค่า ADC กลับเป็นแรงดันไฟฟ้าจริง (Voltage Calculation ในโค้ด):</div>
+                        float voltage = (float)adcValue * (3.3 / 4095.0); // สำหรับ ESP32<br>
+                        float voltageUno = (float)adcValue * (5.0 / 1023.0); // สำหรับ Arduino Uno
+                    </div>
+
+                    <div class="formula-box" style="border-left-color: #f59e0b; margin-top: 15px;">
+                        <div class="formula-title">3. การแปลงแรงดันเป็นค่าทางกายภาพ (Engineering Unit Scaling):</div>
+                        <ul style="font-family: 'Sarabun', sans-serif; font-size: 0.95rem; margin-left: 20px; line-height: 1.6;">
+                            <li><strong>เซนเซอร์วัดอุณหภูมิ LM35 (เอาต์พุต 10 mV / °C):</strong><br>
+                            <code>float tempC = voltage / 0.010; // หรือ voltage * 100.0</code></li>
+                            <li><strong>เซนเซอร์อุตสาหกรรม 4-20 mA (ต่อขนานตัวต้านทาน Shunt 250 Ω เพื่อแปลงเป็น 1-5V):</strong><br>
+                            <code>float current_mA = (voltage / 250.0) * 1000.0;</code></li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 15px; border-left: 4px solid #f59e0b; margin-top: 15px;">
+                        <h4 style="color: #b45309; margin-bottom: 5px;">⚠️ ข้อควรระวังระดับ ปวส. : Non-linearity & Attenuation ของ ESP32</h4>
+                        <p style="font-size: 0.95rem; margin-bottom: 5px;">ADC ของ ESP32 จะมีความคลาดเคลื่อน (Non-linear) ในช่วงแรงดันต่ำกว่า 0.1V และสูงกว่า 3.1V โดยค่าเริ่มต้นถูกตั้งค่า <strong>Attenuation ที่ 11dB (วัดได้ 0-3.3V)</strong> หากต้องการวัดแรงดันต่ำอย่างแม่นยำ สามารถเปลี่ยนได้ด้วยคำสั่ง:</p>
+                        <code style="background: #fef08a; padding: 2px 6px; border-radius: 4px;">analogSetAttenuation(ADC_11db); // 0-3.3V (Default)</code>
+                    </div>
                 </div>
 
                 <!-- Card 4: ESP32 Spec Table and Pinout -->

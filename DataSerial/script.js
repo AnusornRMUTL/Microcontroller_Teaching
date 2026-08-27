@@ -133,7 +133,13 @@ const contentData = {
                 <div class="intro-diagram">
                     ${i2cIntroSvg}
                 </div>
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-top: 15px; border-left: 4px solid var(--i2c-color);">
+                    <h4 style="color: var(--i2c-color); margin-bottom: 5px;">⚠️ จุดสำคัญช่างเทคนิค: ตัวต้านทาน Pull-Up บนบัส I2C</h4>
+                    <p style="font-size: 0.85rem; margin-bottom: 6px;">สาย SDA และ SCL เป็นวงจรแบบ <strong>Open-Drain</strong> (ดึงลง 0V ได้อย่างเดียว) จึง<strong>จำเป็นต้องต่อตัวต้านทาน Pull-Up ขนาด 4.7kΩ - 10kΩ ดึงไว้ที่ VCC เสมอ</strong> หากลืมต่อ สัญญาณจะลอยและสื่อสารไม่ได้เลย (แต่โมดูลเซนเซอร์ส่วนใหญ่จะมี Pull-up ในตัวมาให้แล้ว)</p>
+                </div>
             </div>
+
             <div class="card">
                 <h2 style="color: var(--spi-color);">SPI (Serial Peripheral Interface)</h2>
                 <p>เป็นการสื่อสารแบบ Full-Duplex ใช้สายสัญญาณหลัก 3 เส้น และสายเลือกอุปกรณ์ 1 เส้นต่อ 1 อุปกรณ์:</p>
@@ -141,14 +147,46 @@ const contentData = {
                     <li><strong>MOSI (Master Out Slave In)</strong>: สายข้อมูลจาก Master ไป Slave</li>
                     <li><strong>MISO (Master In Slave Out)</strong>: สายข้อมูลจาก Slave กลับมา Master</li>
                     <li><strong>SCK (Serial Clock)</strong>: สายสัญญาณนาฬิกา</li>
-                    <li><strong>CS / SS (Chip Select / Slave Select)</strong>: สายสำหรับเลือกอุปกรณ์ที่จะคุยด้วย</li>
+                    <li><strong>CS / SS (Chip Select / Slave Select)</strong>: สายสำหรับเลือกอุปกรณ์ที่จะคุยด้วย (Active LOW)</li>
                 </ul>
-                <p><strong>จุดเด่น:</strong> ความเร็วสูงมาก รับ-ส่งข้อมูลได้พร้อมกัน เหมาะสำหรับงานที่ต้องการ Bandwidth สูง เช่น หน้าจอ TFT, SD Card</p>
+                <p><strong>จุดเด่น:</strong> ความเร็วสูงมาก (10-50+ MHz) รับ-ส่งข้อมูลได้พร้อมกัน เหมาะสำหรับงานที่ต้องการความเร็วสูง เช่น หน้าจอ TFT, SD Card, RFID</p>
                 <p><strong>ข้อจำกัด:</strong> ใช้สายเยอะ ยิ่งมีอุปกรณ์มาก ยิ่งต้องใช้ขา CS มากขึ้น</p>
 
                 <div class="intro-diagram">
                     ${spiIntroSvg}
                 </div>
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-top: 15px; border-left: 4px solid var(--spi-color);">
+                    <h4 style="color: var(--spi-color); margin-bottom: 5px;">⚙️ SPI Modes (CPOL & CPHA: Mode 0-3)</h4>
+                    <p style="font-size: 0.85rem; margin-bottom: 6px;">อุปกรณ์ SPI แต่ละตัวอาจอ่านข้อมูลในจังหวะ Clock ต่างกัน นิยมใช้ <strong>SPI_MODE0</strong> (CPOL=0, CPHA=0) ใน Arduino กำหนดด้วย:</p>
+                    <code style="font-size: 0.8rem; background: #e2e8f0; padding: 2px 4px; border-radius: 4px;">SPI.beginTransaction(SPISettings(4000000, MSBFIRST, SPI_MODE0));</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- I2C Address Scanner Card -->
+        <div class="card" style="margin-top: 20px;">
+            <h2 style="color: var(--i2c-color);">🔍 เครื่องมือช่าง: โค้ดสแกนหา Address อุปกรณ์ I2C (I2C Scanner)</h2>
+            <p>เมื่อต่อจอ LCD หรือเซนเซอร์ใหม่ แล้วไม่รู้ว่า Address คืออะไร (เช่น 0x27 หรือ 0x3F) ให้รันโค้ดสแกนนี้ใน Arduino IDE:</p>
+            <div class="code-block" style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; font-family: 'Fira Code', monospace; font-size: 0.88rem; overflow-x: auto;">
+<span style="color: #569cd6;">#include</span> <span style="color: #ce9178;">&lt;Wire.h&gt;</span>
+
+<span style="color: #569cd6;">void</span> <span style="color: #dcdcaa;">setup</span>() {
+  <span style="color: #4ec9b0;">Wire</span>.<span style="color: #dcdcaa;">begin</span>();
+  <span style="color: #4ec9b0;">Serial</span>.<span style="color: #dcdcaa;">begin</span>(<span style="color: #b5cea8;">9600</span>);
+  <span style="color: #4ec9b0;">Serial</span>.<span style="color: #dcdcaa;">println</span>(<span style="color: #ce9178;">"Scanning I2C Bus..."</span>);
+}
+
+<span style="color: #569cd6;">void</span> <span style="color: #dcdcaa;">loop</span>() {
+  <span style="color: #569cd6;">for</span> (<span style="color: #569cd6;">byte</span> address = <span style="color: #b5cea8;">1</span>; address &lt; <span style="color: #b5cea8;">127</span>; address++) {
+    <span style="color: #4ec9b0;">Wire</span>.<span style="color: #dcdcaa;">beginTransmission</span>(address);
+    <span style="color: #569cd6;">if</span> (<span style="color: #4ec9b0;">Wire</span>.<span style="color: #dcdcaa;">endTransmission</span>() == <span style="color: #b5cea8;">0</span>) {
+      <span style="color: #4ec9b0;">Serial</span>.<span style="color: #dcdcaa;">print</span>(<span style="color: #ce9178;">"พบอุปกรณ์ที่ Address: 0x"</span>);
+      <span style="color: #4ec9b0;">Serial</span>.<span style="color: #dcdcaa;">println</span>(address, <span style="color: #b5cea8;">HEX</span>);
+    }
+  }
+  <span style="color: #dcdcaa;">delay</span>(<span style="color: #b5cea8;">5000</span>);
+}
             </div>
         </div>
     `,

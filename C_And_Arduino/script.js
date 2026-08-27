@@ -47,12 +47,57 @@ const contentData = {
                 <div class="var-type-item">
                     <div class="var-type-head">
                         <span class="var-type-badge badge-bool">boolean</span>
-                        <span class="var-type-title">ค่าความจริง</span>
+                        <span class="var-type-title">ค่าความจริง (1 bit)</span>
                     </div>
-                    <p class="var-type-text">ใช้เก็บสถานะจริงหรือเท็จ เช่น <code>true</code> / <code>false</code> และใน Arduino พบ <code>bool</code> ได้เช่นกัน</p>
+                    <p class="var-type-text">ใช้เก็บสถานะจริงหรือเท็จ เช่น <code>true</code> / <code>false</code> (หรือ <code>bool</code>)</p>
                     <div class="code-block inline-code-block">
 <span class="code-keyword">boolean</span> isActive = <span class="code-keyword">true</span>;
                     </div>
+                </div>
+
+                <div class="var-type-item">
+                    <div class="var-type-head">
+                        <span class="var-type-badge badge-int">byte / uint8_t</span>
+                        <span class="var-type-title">จำนวนเต็ม 8 บิต (0-255)</span>
+                    </div>
+                    <p class="var-type-text">ประหยัดแรมสูงสุด เหมาะกับหมายเลขขา I/O หรือค่า PWM (0-255)</p>
+                    <div class="code-block inline-code-block">
+<span class="code-keyword">byte</span> pwmVal = <span class="code-number">128</span>;
+                    </div>
+                </div>
+
+                <div class="var-type-item">
+                    <div class="var-type-head">
+                        <span class="var-type-badge badge-float">unsigned long</span>
+                        <span class="var-type-title">จำนวนเต็มบวก 32 บิต</span>
+                    </div>
+                    <p class="var-type-text">เก็บค่าได้ 0 ถึง 4,294,967,295 <strong>จำเป็นต้องใช้คู่กับฟังก์ชัน <code>millis()</code></strong></p>
+                    <div class="code-block inline-code-block">
+<span class="code-keyword">unsigned long</span> previousTime = <span class="code-number">0</span>;
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>💡 คำระบุคุณลักษณะตัวแปรพิเศษ (Variable Qualifiers สำหรับงานช่าง)</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; margin-top: 15px;">
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; border-left: 4px solid #3b82f6;">
+                    <h3 style="color: #3b82f6; margin-bottom: 5px;"><code>const</code> (ค่าคงที่)</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 8px;">ป้องกันไม่ให้โค้ดส่วนอื่นแก้ไขค่า เช่น หมายเลขขาพอร์ต ช่วยประหยัด RAM</p>
+                    <div class="code-block inline-code-block"><span class="code-keyword">const int</span> LED_PIN = <span class="code-number">13</span>;</div>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; border-left: 4px solid #10b981;">
+                    <h3 style="color: #10b981; margin-bottom: 5px;"><code>static</code> (คงค่าเดิม)</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 8px;">ตัวแปรภายในฟังก์ชันจะไม่ถูกลบเมื่อออกจากฟังก์ชัน รักษาค่าเดิมไว้ใช้ในรอบถัดไป</p>
+                    <div class="code-block inline-code-block"><span class="code-keyword">static int</span> counter = <span class="code-number">0</span>;</div>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; border-left: 4px solid #ef4444;">
+                    <h3 style="color: #ef4444; margin-bottom: 5px;"><code>volatile</code> (ห้าม Optimize)</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 8px;"><strong>จำเป็นอย่างยิ่ง!</strong> สำหรับตัวแปรที่มีการเปลี่ยนแปลงค่าภายในฟังก์ชัน <strong>Interrupt (ISR)</strong></p>
+                    <div class="code-block inline-code-block"><span class="code-keyword">volatile int</span> pulseCount = <span class="code-number">0</span>;</div>
                 </div>
             </div>
         </div>
@@ -291,6 +336,65 @@ const contentData = {
             </div>
             <p class="array-hint">ตัวอย่างนี้ทำให้เห็นว่า ถ้าเลือกชนิดข้อมูลไม่เหมาะสม ผลการคำนวณอาจคลาดเคลื่อนมาก โดยเฉพาะงานวัดค่า งานเซนเซอร์ และการคำนวณทางวิศวกรรม</p>
         </div>
+
+        <div class="card">
+            <h2>⚡ การประมวลผลระดับบิต (Bitwise Operations สำหรับงานฮาร์ดแวร์/รีจิสเตอร์)</h2>
+            <p>ในงานไมโครคอนโทรลเลอร์ระดับ ปวส. การควบคุมพอร์ตหรือตรวจเช็คสถานะ Flag จากโมดูลต่างๆ มักต้องจัดการกับบิตโดยตรง:</p>
+
+            <div style="overflow-x: auto; margin-top: 15px;">
+                <table class="flow-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #1e293b; color: white;">
+                            <th style="padding: 10px;">ตัวดำเนินการ</th>
+                            <th style="padding: 10px;">ชื่อ</th>
+                            <th style="padding: 10px;">ตัวอย่าง</th>
+                            <th style="padding: 10px;">คำอธิบายการประยุกต์ใช้</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 10px; font-weight: bold; text-align: center; color: #3b82f6;"><code>&</code></td>
+                            <td>Bitwise AND</td>
+                            <td><code>0b1100 & 0b1010 = 0b1000</code></td>
+                            <td>ใช้สำหรับ <strong>Bit Masking</strong> เช็คว่าบิตที่ต้องการเป็น 1 หรือไม่ เช่น <code>if (status & (1 << 3))</code></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; font-weight: bold; text-align: center; color: #10b981;"><code>|</code></td>
+                            <td>Bitwise OR</td>
+                            <td><code>0b1100 | 0b1010 = 0b1110</code></td>
+                            <td>ใช้สำหรับ <strong>เปิดการทำงาน (Set bit ให้เป็น 1)</strong> โดยไม่กระทบบิตอื่น เช่น <code>PORTB |= (1 << 5);</code></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; font-weight: bold; text-align: center; color: #f59e0b;"><code>^</code></td>
+                            <td>Bitwise XOR</td>
+                            <td><code>0b1100 ^ 0b1010 = 0b0110</code></td>
+                            <td>ใช้สำหรับ <strong>Toggle สลับสถานะบิต (จาก 0 เป็น 1 หรือ 1 เป็น 0)</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; font-weight: bold; text-align: center; color: #ef4444;"><code>~</code></td>
+                            <td>Bitwise NOT</td>
+                            <td><code>~0b00001111 = 0b11110000</code></td>
+                            <td>กลับค่าทุกบิต (Invert)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; font-weight: bold; text-align: center; color: #8b5cf6;"><code>&lt;&lt;</code> / <code>&gt;&gt;</code></td>
+                            <td>Shift Left / Right</td>
+                            <td><code>1 &lt;&lt; 3 = 0b00001000 (8)</code></td>
+                            <td>เลื่อนบิตไปทางซ้าย/ขวา (เลื่อนซ้าย 1 บิตเทียบเท่ากับการคูณด้วย 2)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 style="margin-top: 20px;">🛠️ คำสั่งสำเร็จรูปของ Arduino สำหรับจัดการบิต</h3>
+            <div class="code-block">
+<span class="code-keyword">byte</span> x = <span class="code-number">0b00000000</span>;
+<span class="code-function">bitSet</span>(x, <span class="code-number">3</span>);       <span class="code-comment">// สั่งให้บิตตำแหน่งที่ 3 เป็น 1 -> x กลายเป็น 0b00001000</span>
+<span class="code-keyword">bool</span> state = <span class="code-function">bitRead</span>(x, <span class="code-number">3</span>); <span class="code-comment">// อ่านค่าบิตที่ 3 -> ได้ค่า 1 (true)</span>
+<span class="code-function">bitClear</span>(x, <span class="code-number">3</span>);     <span class="code-comment">// ล้างบิตตำแหน่งที่ 3 ให้กลับเป็น 0 -> x กลายเป็น 0b00000000</span>
+<span class="code-function">bitWrite</span>(x, <span class="code-number">2</span>, <span class="code-number">1</span>);   <span class="code-comment">// เขียนค่า 1 ลงที่บิต 2</span>
+            </div>
+        </div>
     `,
     flowchart: `
         <div class="card">
@@ -503,6 +607,42 @@ const contentData = {
 
   myServo.<span class="code-function">write</span>(<span class="code-number">90</span>); <span class="code-comment">// สั่งให้หมุนไปที่ 90 องศา</span>
 }
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>⏱️ การจับเวลาแบบไม่หยุดรอ (Non-blocking Timing: <code>millis()</code> vs <code>delay()</code>)</h2>
+            <p>ในงานอุตสาหกรรมและระบบควบคุมระดับ ปวส. <strong>ห้ามใช้คำสั่ง <code>delay()</code> เด็ดขาด</strong> ในโปรแกรมที่ต้องตรวจจับเซนเซอร์และทำงานหลายอย่างพร้อมกัน เพราะ <code>delay()</code> จะทำให้ CPU หยุดนิ่งและไม่ตอบสนองต่อปุ่มกดหรือเหตุการณ์ใดๆ</p>
+
+            <div class="grid-2" style="margin-top: 15px;">
+                <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 15px; border-left: 4px solid #ef4444;">
+                    <h3 style="color: #ef4444; margin-bottom: 5px;">❌ แบบใช้ <code>delay()</code> (Blocking)</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 8px;">CPU จะหยุดค้าง 1 วินาทีเต็ม หากมีคนกดปุ่มระหว่างนี้ โปรแกรมจะไม่รับรู้เลย</p>
+                    <div class="code-block">
+<span class="code-function">digitalWrite</span>(LED, <span class="code-keyword">HIGH</span>);
+<span class="code-function">delay</span>(<span class="code-number">1000</span>); <span class="code-comment">// CPU ค้าง หยุดทำงาน 1 วิ</span>
+<span class="code-function">digitalWrite</span>(LED, <span class="code-keyword">LOW</span>);
+<span class="code-function">delay</span>(<span class="code-number">1000</span>);
+                    </div>
+                </div>
+
+                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 15px; border-left: 4px solid #10b981;">
+                    <h3 style="color: #10b981; margin-bottom: 5px;">✅ แบบใช้ <code>millis()</code> (Non-blocking)</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 8px;">CPU ทำงานลูปวนต่อเนื่องตลอดเวลา แล้วเช็คว่าเวลาผ่านไปครบ 1 วินาทีหรือยัง</p>
+                    <div class="code-block">
+<span class="code-keyword">unsigned long</span> previousTime = <span class="code-number">0</span>;
+<span class="code-keyword">const long</span> interval = <span class="code-number">1000</span>;
+
+<span class="code-keyword">void</span> <span class="code-function">loop</span>() {
+  <span class="code-keyword">unsigned long</span> currentTime = <span class="code-function">millis</span>();
+  <span class="code-keyword">if</span> (currentTime - previousTime >= interval) {
+    previousTime = currentTime;
+    <span class="code-comment">// สลับสถานะ LED</span>
+  }
+  <span class="code-comment">// ยังสามารถอ่านปุ่มกดได้ลื่นไหลตลอดเวลา!</span>
+}
+                    </div>
+                </div>
             </div>
         </div>
     `,

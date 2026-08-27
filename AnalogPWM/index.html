@@ -17,11 +17,13 @@
         <aside class="sidebar">
             <h2 class="sidebar-title">Microcontroller</h2>
             <nav class="sidebar-nav">
-                <a href="../IOPorts/index.html">1. I/O Ports</a>
-                <a href="../DataSerial/index.html">2. Data Serial</a>
-                <a href="../DataTransfer/index.html">3. Data Transfer</a>
-                <a href="index.html" class="active">4. Analog & PWM</a>
-                <a href="../DataSerial2/index.html">5. Data Serial 2</a>
+                <a href="../C_And_Arduino/index.html">1. ภาษา C & Arduino</a>
+                <a href="../IOPorts/index.html">2. พอร์ตดิจิทัล I/O</a>
+                <a href="../ADC/index.html">3. แอนะล็อก ADC</a>
+                <a href="index.html" class="active">4. สัญญาณแอนะล็อก & PWM</a>
+                <a href="../DataTransfer/index.html">5. การรับ-ส่งข้อมูล</a>
+                <a href="../DataSerial/index.html">6. โปรโตคอล I2C & SPI</a>
+                <a href="../DataSerial2/index.html">7. UART, RS232 & RS485</a>
                 <a href="../index.html" style="margin-top: 1rem; color: #00979C; font-weight: bold; display: block;">← กลับหน้าหลัก</a>
             </nav>
         </aside>
@@ -53,6 +55,84 @@
                             <li><strong>Arduino Uno:</strong> ความละเอียด 8-bit ส่งค่า <strong>0 ถึง 255</strong> (0 = 0V, 255 = 5V)</li>
                             <li><strong>ขาที่รองรับ:</strong> ขาที่มีเครื่องหมาย ~ (เช่น 3, 5, 6, 9, 10, 11)</li>
                             <li><strong>คำสั่ง:</strong> <code>analogWrite(pin, value);</code></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Theory 1.1: Average Voltage Math & Table -->
+                <div style="margin-top: 25px; padding-top: 15px; border-top: 2px dashed #e2e8f0;">
+                    <h3 style="color: #00979C;">📐 การคำนวณแรงดันไฟฟ้าเฉลี่ย (Average Voltage) ของ PWM</h3>
+                    <p>PWM ไม่ได้ปล่อยแรงดันต่ำลงจริงๆ แต่ปล่อย <strong>5V สลับ 0V ด้วยความถี่สูง (~490Hz)</strong> ทำให้อุปกรณ์โหลดแบบเหนี่ยวนำหรือความต้านทาน เช่น LED หรือ มอเตอร์ มองเห็นเป็นแรงดันเฉลี่ย:</p>
+                    
+                    <div style="background: #f8fafc; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 1rem; border-left: 4px solid #00979C; margin: 10px 0;">
+                        V_avg = V_peak x ( Duty Cycle % / 100 )<br>
+                        Duty Cycle (%) = ( analogWrite_value / 255 ) x 100
+                    </div>
+
+                    <div style="overflow-x: auto; margin-top: 10px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: center;">
+                            <tr style="background: #e2e8f0; font-weight: bold;">
+                                <td style="padding: 8px;">ค่า analogWrite()</td>
+                                <td style="padding: 8px;">Duty Cycle (%)</td>
+                                <td style="padding: 8px;">แรงดันเฉลี่ย V_avg (5V Uno)</td>
+                                <td style="padding: 8px;">แรงดันเฉลี่ย V_avg (3.3V ESP32)</td>
+                                <td style="padding: 8px;">ผลลัพธ์ที่ LED</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 6px;"><code>0</code></td>
+                                <td>0% (LOW ตลอด)</td>
+                                <td>0.00 V</td>
+                                <td>0.00 V</td>
+                                <td>ดับสนิท</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+                                <td style="padding: 6px;"><code>64</code></td>
+                                <td>25%</td>
+                                <td>1.25 V</td>
+                                <td>0.82 V</td>
+                                <td>สว่าง 25%</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 6px;"><code>128</code></td>
+                                <td>50%</td>
+                                <td>2.50 V</td>
+                                <td>1.65 V</td>
+                                <td>สว่างครึ่งหนึ่ง</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+                                <td style="padding: 6px;"><code>191</code></td>
+                                <td>75%</td>
+                                <td>3.75 V</td>
+                                <td>2.47 V</td>
+                                <td>สว่าง 75%</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px;"><code>255</code></td>
+                                <td>100% (HIGH ตลอด)</td>
+                                <td>5.00 V</td>
+                                <td>3.30 V</td>
+                                <td>สว่างเต็มที่ 100%</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Theory 1.2: PWM vs True DAC & Industrial Motor Driver -->
+                <div class="theory-grid" style="margin-top: 20px;">
+                    <div class="theory-box" style="border-left-color: #8b5cf6;">
+                        <h4 style="color: #8b5cf6;">⚡ PWM vs True DAC (สัญญาณแอนะล็อกแท้)</h4>
+                        <ul style="font-size: 0.9rem; line-height: 1.6;">
+                            <li><strong>Arduino Uno (PWM):</strong> ไม่มี DAC แท้ สัญญาณยังคงเป็น Digital Pulse เหมาะกับหรี่ไฟ LED, คุมความเร็วมอเตอร์ แต่<strong>ไม่เหมาะกับงานเครื่องเสียง Hi-Fi</strong></li>
+                            <li><strong>ESP32 (True DAC):</strong> มี DAC 8-bit แท้ 2 ช่อง (GPIO 25, GPIO 26) จ่ายแรงดันแอนะล็อกแท้เรียบเนียนด้วยคำสั่ง <code>dacWrite(25, 128);</code></li>
+                        </ul>
+                    </div>
+
+                    <div class="theory-box" style="border-left-color: #f59e0b;">
+                        <h4 style="color: #f59e0b;">🚗 การประยุกต์ใช้ PWM ขับมอเตอร์ DC (H-Bridge Driver)</h4>
+                        <p style="font-size: 0.9rem;">ห้ามต่อมอเตอร์เข้าขา Arduino ตรงๆ เด็ดขาด! ต้องใช้บอร์ดขับ เช่น <strong>L298N</strong> หรือ <strong>MOSFET Driver</strong>:</p>
+                        <ul style="font-size: 0.85rem;">
+                            <li>จ่ายสัญญาณ PWM เข้าขา <strong>ENA / ENB</strong> เพื่อควบคุมความเร็วรอบ</li>
+                            <li>จ่ายสัญญาณ HIGH/LOW เข้าขา <strong>IN1 / IN2</strong> เพื่อกลับทิศทางการหมุน</li>
                         </ul>
                     </div>
                 </div>

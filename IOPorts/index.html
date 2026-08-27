@@ -48,9 +48,68 @@
             <div class="theory-commands">
                 <h3>คำสั่งพื้นฐานที่ใช้บ่อย (Digital I/O)</h3>
                 <ul>
-                    <li><code>digitalWrite(pin, HIGH / LOW)</code> : สั่งให้ขาพอร์ตจ่ายไฟ (HIGH = 5V) หรือหยุดจ่ายไฟ (LOW = 0V)</li>
-                    <li><code>digitalRead(pin)</code> : อ่านสถานะของขาพอร์ต ว่ามีไฟเข้า (HIGH) หรือไม่มี (LOW)</li>
+                    <li><code>pinMode(pin, INPUT / OUTPUT / INPUT_PULLUP)</code> : กำหนดทิศทางของขาพอร์ต</li>
+                    <li><code>digitalWrite(pin, HIGH / LOW)</code> : สั่งจ่ายไฟ (HIGH = 5V) หรือหยุดจ่ายไฟ (LOW = 0V)</li>
+                    <li><code>digitalRead(pin)</code> : อ่านสถานะของขาพอร์ต (HIGH หรือ LOW)</li>
                 </ul>
+            </div>
+
+            <!-- Theory 1.1: Pull-up / Pull-down -->
+            <div style="margin-top: 25px; padding-top: 15px; border-top: 2px dashed #e2e8f0;">
+                <h3 style="color: #00979C;">⚠️ ปัญหาขาอินพุตลอย (Floating Pin) และตัวต้านทาน Pull-up / Pull-down</h3>
+                <p>ขาอินพุตของไมโครคอนโทรลเลอร์มีความต้านทานภายในสูงมาก หากไม่ต่อตัวต้านทานกำกับไว้ ขาจะทำหน้าที่เสมือนเสาอากาศรับสัญญาณรบกวนในอากาศ ทำให้อ่านค่าได้ไม่แน่นอน (0 สลับ 1 มั่ว):</p>
+                
+                <div class="theory-grid" style="margin-top: 10px;">
+                    <div class="theory-box" style="border-left-color: #3b82f6;">
+                        <h4 style="color: #3b82f6;">1. Pull-up ภายนอก (Active LOW)</h4>
+                        <p>ต่อตัวต้านทาน <code>10kΩ</code> ดึงขาไปที่ <strong>5V (VCC)</strong> และต่อสวิตช์ลง <strong>GND</strong></p>
+                        <ul style="font-size: 0.9rem;">
+                            <li>ไม่กดปุ่ม: อ่านได้ <strong>HIGH (5V)</strong></li>
+                            <li>กดปุ่ม: อ่านได้ <strong>LOW (0V)</strong></li>
+                        </ul>
+                    </div>
+                    <div class="theory-box" style="border-left-color: #10b981;">
+                        <h4 style="color: #10b981;">2. ภายในชิป (INPUT_PULLUP) ✨ นิยมที่สุด</h4>
+                        <p>Arduino มีตัวต้านทาน Pull-up ภายในขนาด 20kΩ-50kΩ ให้เรียกใช้ได้เลย</p>
+                        <code style="font-size: 0.85rem;">pinMode(2, INPUT_PULLUP);</code>
+                        <p style="font-size: 0.85rem; margin-top: 5px; color: #166534;">เพียงต่อสวิตช์ระหว่างขา 2 กับ GND ไม่ต้องใช้ตัวต้านทานภายนอก!</p>
+                    </div>
+                    <div class="theory-box" style="border-left-color: #f59e0b;">
+                        <h4 style="color: #f59e0b;">3. Pull-down (Active HIGH)</h4>
+                        <p>ต่อตัวต้านทาน <code>10kΩ</code> ดึงขาไปที่ <strong>GND</strong> และต่อสวิตช์ไปที่ <strong>5V (VCC)</strong></p>
+                        <ul style="font-size: 0.9rem;">
+                            <li>ไม่กดปุ่ม: อ่านได้ <strong>LOW (0V)</strong></li>
+                            <li>กดปุ่ม: อ่านได้ <strong>HIGH (5V)</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Theory 1.2: LED Resistor & Industrial Drivers -->
+            <div style="margin-top: 25px; padding-top: 15px; border-top: 2px dashed #e2e8f0;">
+                <h3 style="color: #00979C;">📐 การคำนวณตัวต้านทาน LED & วงจรขับโหลดกำลัง (Industrial Driving)</h3>
+                
+                <div class="theory-grid" style="margin-top: 10px;">
+                    <div class="theory-box" style="border-left-color: #ef4444;">
+                        <h4 style="color: #ef4444;">สูตรคำนวณตัวต้านทาน LED (Current Limiting)</h4>
+                        <p>ห้ามต่อ LED ตรงกับขาพอร์ตโดยไม่มีตัวต้านทาน เพราะจะดึงกระแสเกินจนชิปพัง!</p>
+                        <div style="background: #f8fafc; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 0.95rem; margin: 8px 0;">
+                            R = (V_CC - V_LED) / I_LED<br>
+                            R = (5V - 2.0V) / 0.015A = 200 Ω
+                        </div>
+                        <p style="font-size: 0.9rem;">👉 <strong>เลือกใช้ค่ามาตรฐาน: 220 Ω หรือ 330 Ω</strong> (กระแสปลอดภัย ~10-15 mA)</p>
+                    </div>
+
+                    <div class="theory-box" style="border-left-color: #8b5cf6;">
+                        <h4 style="color: #8b5cf6;">การขับ Relay / โซลินอยด์ในอุตสาหกรรม</h4>
+                        <p>ขาไมโครคอนโทรลเลอร์จ่ายไฟได้สูงสุดเพียง <strong>20-40 mA</strong> ไม่สามารถขับรีเลย์ตรงๆ ได้ ต้องใช้:</p>
+                        <ul style="font-size: 0.9rem;">
+                            <li><strong>Transistor / MOSFET:</strong> เป็นสวิตช์ขยายกระแส</li>
+                            <li><strong>Optocoupler:</strong> แยกกราวด์สัญญาณและกราวด์กำลัง (Noise Isolation)</li>
+                            <li><strong>Flyback Diode (1N4007):</strong> ต่อขนานย้อนทางกับขดลวดรีเลย์เพื่อป้องกัน Back-EMF กระชากกลับทำลายวงจร</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </section>
 

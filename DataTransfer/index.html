@@ -54,11 +54,56 @@
             </div>
 
             <div class="theory-commands">
-                <h3>คำสั่ง Arduino ที่เกี่ยวข้อง (Serial)</h3>
+                <h3>คำสั่ง Arduino ที่เกี่ยวข้อง (Serial Communication)</h3>
                 <ul>
-                    <li><code>Serial.begin(9600);</code> : เปิดใช้งานการสื่อสารอนุกรมที่ความเร็ว 9600 บิตต่อวินาที (Baud rate)</li>
-                    <li><code>Serial.print("A");</code> : ส่งข้อมูลออกไปทางขา TX (Pin 1)</li>
+                    <li><code>Serial.begin(speed);</code> : เปิดใช้งานพอร์ตสื่อสาร เช่น 9600 หรือ 115200 bps</li>
+                    <li><code>Serial.available();</code> : ตรวจสอบจำนวนไบต์ที่รออยู่ใน Receive Buffer (FIFO)</li>
+                    <li><code>Serial.read();</code> : อ่านข้อมูล 1 ไบต์แรกที่อยู่ใน Buffer ออกมาประมวลผล</li>
+                    <li><code>Serial.print() / println();</code> : ส่งข้อมูลออกไปยังขา TX</li>
                 </ul>
+            </div>
+
+            <!-- Theory 1.1: Duplex Modes -->
+            <div style="margin-top: 25px; padding-top: 15px; border-top: 2px dashed #e2e8f0;">
+                <h3 style="color: #00979C;">🔄 ทิศทางการส่งข้อมูล (Communication Modes)</h3>
+                <div class="theory-grid" style="margin-top: 10px;">
+                    <div class="theory-box" style="border-left-color: #3b82f6;">
+                        <h4 style="color: #3b82f6;">1. ซิมเพล็กซ์ (Simplex)</h4>
+                        <p>ส่งข้อมูลได้ <strong>ทิศทางเดียวตลอดเวลา</strong> ฝั่งรับไม่สามารถตอบกลับได้</p>
+                        <p style="font-size: 0.85rem; color: #64748b;">ตัวอย่าง: สัญญาณวิทยุกระจายเสียง, รีโมตทีวี, เซนเซอร์ส่งอย่างเดียว</p>
+                    </div>
+                    <div class="theory-box" style="border-left-color: #f59e0b;">
+                        <h4 style="color: #f59e0b;">2. ฮาล์ฟดูเพล็กซ์ (Half-Duplex)</h4>
+                        <p>ส่งได้ <strong>2 ทิศทาง แต่ต้องสลับกัน</strong> ไม่สามารถส่งพร้อมกันได้</p>
+                        <p style="font-size: 0.85rem; color: #64748b;">ตัวอย่าง: วิทยุสื่อสาร (Walkie-Talkie), I2C, RS485 ระบบ 2 สาย</p>
+                    </div>
+                    <div class="theory-box" style="border-left-color: #10b981;">
+                        <h4 style="color: #10b981;">3. ฟูลดูเพล็กซ์ (Full-Duplex)</h4>
+                        <p>รับและส่งข้อมูลได้ <strong>พร้อมกันทั้ง 2 ทิศทางในเวลาเดียวกัน</strong></p>
+                        <p style="font-size: 0.85rem; color: #64748b;">ตัวอย่าง: โทรศัพท์, UART (Tx/Rx), RS232, SPI</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Theory 1.2: Sync vs Async & Serial Buffer -->
+            <div class="theory-grid" style="margin-top: 20px;">
+                <div class="theory-box" style="border-left-color: #8b5cf6;">
+                    <h4 style="color: #8b5cf6;">⏱️ ซิงโครนัส vs อะซิงโครนัส</h4>
+                    <ul style="font-size: 0.88rem; line-height: 1.6;">
+                        <li><strong>Synchronous (ซิงโครนัส):</strong> ใช้สายสัญญาณนาฬิกา (Clock) กำกับจังหวะ (เช่น <strong>I2C, SPI</strong>) ความเร็วสูง ไม่ต้องระบุ Baud rate ล่วงหน้า</li>
+                        <li><strong>Asynchronous (อะซิงโครนัส):</strong> <strong>ไม่มีสาย Clock</strong> (เช่น <strong>UART, RS232, RS485</strong>) ต้องตั้งความเร็ว Baud rate ให้ตรงกันล่วงหน้า และใช้ Start/Stop bit กำกับเฟรม</li>
+                    </ul>
+                </div>
+
+                <div class="theory-box" style="border-left-color: #ef4444;">
+                    <h4 style="color: #ef4444;">📥 หน่วยความจำพักข้อมูล (Serial FIFO Buffer)</h4>
+                    <p style="font-size: 0.88rem;">Arduino มีบัฟเฟอร์ขนาด <strong>64 Bytes</strong> คอยรับข้อมูลเข้าอัตโนมัติ การเขียนโค้ดที่ถูกต้องระดับ ปวส. ต้องเช็คว่ามีข้อมูลก่อนอ่านเสมอ:</p>
+                    <div style="background: #f8fafc; padding: 6px 10px; border-radius: 4px; font-family: monospace; font-size: 0.82rem;">
+                        while (Serial.available() > 0) {<br>
+                        &nbsp;&nbsp;char inChar = (char)Serial.read();<br>
+                        }
+                    </div>
+                </div>
             </div>
         </section>
 
