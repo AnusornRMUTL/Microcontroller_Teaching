@@ -257,14 +257,14 @@ function renderQuiz() {
             ? "สุดยอด! คุณมีความรู้เรื่อง Data Serial อย่างทะลุปรุโปร่ง 🎉" 
             : "พยายามอีกนิดนะ กลับไปทบทวนทฤษฎีแล้วลองใหม่! 💪";
         
-        quizContainer.innerHTML = \`
+        quizContainer.innerHTML = `
             <div id="quiz-result-card">
                 <h2>ผลการทดสอบ</h2>
-                <div class="score-display">\${score} / \${quizQuestions.length}</div>
-                <div class="result-message">\${resultMsg}</div>
-                \${score < quizQuestions.length ? \`<button onclick="resetQuiz()">ทำแบบทดสอบใหม่</button>\` : ''}
+                <div class="score-display">${score} / ${quizQuestions.length}</div>
+                <div class="result-message">${resultMsg}</div>
+                ${score < quizQuestions.length ? `<button onclick="resetQuiz()">ทำแบบทดสอบใหม่</button>` : ''}
             </div>
-        \`;
+        `;
         return;
     }
 
@@ -272,22 +272,22 @@ function renderQuiz() {
     let optionsHtml = '';
     
     qData.options.forEach((opt, index) => {
-        optionsHtml += \`<button class="option-btn" onclick="checkAnswer(\${index}, this)">\${opt}</button>\`;
+        optionsHtml += `<button class="option-btn" onclick="checkAnswer(${index}, this)">${opt}</button>`;
     });
 
-    quizContainer.innerHTML = \`
+    quizContainer.innerHTML = `
         <div class="quiz-header">
             <h3>แบบทดสอบ Data Serial (UART/RS232/RS485)</h3>
-            <div class="quiz-progress">ข้อ \${currentQuestion + 1} จาก \${quizQuestions.length}</div>
+            <div class="quiz-progress">ข้อ ${currentQuestion + 1} จาก ${quizQuestions.length}</div>
         </div>
-        <div class="question-box">\${qData.q}</div>
+        <div class="question-box">${qData.q}</div>
         <div class="options-grid" id="options-grid">
-            \${optionsHtml}
+            ${optionsHtml}
         </div>
         <div class="quiz-actions">
             <button id="next-btn" style="display:none;" onclick="nextQuestion()">ข้อถัดไป ➔</button>
         </div>
-    \`;
+    `;
 }
 
 window.checkAnswer = function(selectedIndex, btnElement) {
