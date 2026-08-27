@@ -1,0 +1,212 @@
+[
+    {
+        "id": 1,
+        "question": "โปรโตคอล I2C ใช้สายสัญญาณกี่เส้นในการสื่อสารข้อมูลและสัญญาณนาฬิกา?",
+        "options": ["1 เส้น", "2 เส้น", "3 เส้น", "4 เส้น"],
+        "answer": 1,
+        "reason": "I2C ใช้สายเพียง 2 เส้น คือ SDA (Serial Data) สำหรับรับส่งข้อมูล และ SCL (Serial Clock) สำหรับให้จังหวะ"
+    },
+    {
+        "id": 2,
+        "question": "ข้อใดคือชื่อขาที่ใช้ส่งข้อมูลในระบบ I2C?",
+        "options": ["MOSI", "MISO", "SDA", "SCK"],
+        "answer": 2,
+        "reason": "SDA (Serial Data Line) เป็นสายที่ใช้รับและส่งข้อมูลในระบบ I2C"
+    },
+    {
+        "id": 3,
+        "question": "ในระบบ SPI ขาใดทำหน้าที่ส่งข้อมูลจาก Master ไปยัง Slave?",
+        "options": ["MOSI", "MISO", "SDA", "SCL"],
+        "answer": 0,
+        "reason": "MOSI (Master Out Slave In) เป็นสายสำหรับ Master ส่งข้อมูลไปหา Slave"
+    },
+    {
+        "id": 4,
+        "question": "ระบบการสื่อสารใดที่ใช้การระบุ 'Address' (ที่อยู่) ของอุปกรณ์เพื่อเลือกตัวที่จะสื่อสารด้วย?",
+        "options": ["SPI", "I2C", "UART", "RS485 เท่านั้น"],
+        "answer": 1,
+        "reason": "I2C ใช้วิธีเรียกหมายเลขอุปกรณ์ (Address) 7-bit หรือ 10-bit เพื่อเลือกว่าจะคุยกับ Slave ตัวไหน บนสาย SDA/SCL เส้นเดียวกัน"
+    },
+    {
+        "id": 5,
+        "question": "หากต้องการเชื่อมต่ออุปกรณ์ Slave จำนวน 3 ตัว ระบบ SPI ต้องใช้สายสัญญาณทั้งหมดกี่เส้น?",
+        "options": ["2 เส้น", "4 เส้น", "6 เส้น", "3 เส้น (หลัก) + 3 เส้น (CS) = 6 เส้น"],
+        "answer": 3,
+        "reason": "SPI ใช้สายร่วมกัน 3 เส้น (MOSI, MISO, SCK) และต้องการสาย CS (Chip Select) แยกเฉพาะสำหรับ Slave แต่ละตัว 3 ตัวก็ต้องใช้ 3 เส้น รวมเป็น 6 เส้น"
+    },
+    {
+        "id": 6,
+        "question": "ข้อใดคือข้อดีของ SPI เมื่อเทียบกับ I2C?",
+        "options": ["ใช้สายสัญญาณน้อยกว่า", "มีความเร็วในการรับส่งข้อมูลสูงกว่า", "ต่อสายได้ระยะทางไกลกว่ามาก", "ประหยัดพอร์ตของไมโครคอนโทรลเลอร์มากกว่า"],
+        "answer": 1,
+        "reason": "SPI ทำงานแบบ Full-Duplex และมีความเร็ว (Clock speed) สูงกว่า I2C มาก มักใช้กับอุปกรณ์ที่ต้องการส่งข้อมูลเร็วๆ เช่น SD Card, จอ TFT"
+    },
+    {
+        "id": 7,
+        "question": "การสื่อสารแบบใดที่เป็นแบบ Full-Duplex (รับและส่งข้อมูลพร้อมกันได้)?",
+        "options": ["I2C", "SPI", "1-Wire", "ถูกทั้ง I2C และ SPI"],
+        "answer": 1,
+        "reason": "SPI มีสาย MOSI และ MISO แยกกัน จึงสามารถส่งและรับข้อมูลได้ในเวลาเดียวกัน (Full-Duplex) ส่วน I2C ใช้สาย SDA เส้นเดียวจึงต้องสลับกันส่ง (Half-Duplex)"
+    },
+    {
+        "id": 8,
+        "question": "ใน Arduino ไลบรารีใดที่ใช้สำหรับการสื่อสาร I2C?",
+        "options": ["SPI.h", "Wire.h", "Serial.h", "I2C.h"],
+        "answer": 1,
+        "reason": "Wire.h เป็นไลบรารีมาตรฐานใน Arduino สำหรับติดต่อสื่อสารผ่านโปรโตคอล I2C"
+    },
+    {
+        "id": 9,
+        "question": "ใน Arduino การเริ่มต้นส่งข้อมูลหาอุปกรณ์ I2C ต้องใช้คำสั่งใด?",
+        "options": ["SPI.beginTransaction()", "Wire.beginTransmission(address)", "Serial.begin()", "I2C.start()"],
+        "answer": 1,
+        "reason": "Wire.beginTransmission(address) ใช้สำหรับเตรียมตัวส่งข้อมูลไปยังอุปกรณ์ Slave ที่มี Address ระบุไว้"
+    },
+    {
+        "id": 10,
+        "question": "ขา CS (Chip Select) หรือ SS (Slave Select) ในระบบ SPI ทำหน้าที่อะไร?",
+        "options": ["สร้างสัญญาณนาฬิกา", "กำหนดความเร็วในการส่งข้อมูล", "เลือกอุปกรณ์ Slave ที่ต้องการจะสื่อสารด้วยโดยดึงให้เป็น LOW", "ส่งข้อมูลหลัก"],
+        "answer": 2,
+        "reason": "ใน SPI, Master จะดึงสาย CS ของ Slave ตัวที่ต้องการสื่อสารให้เป็น LOW (Active LOW) เพื่อเปิดการทำงานของชิปตัวนั้น"
+    },
+    {
+        "id": 11,
+        "question": "I2C ย่อมาจากอะไร?",
+        "options": ["Inter-Integrated Circuit", "Internal-Integrated Chip", "Inter-Interface Connection", "Input-Integrated Circuit"],
+        "answer": 0,
+        "reason": "I2C หรือ IIC ย่อมาจาก Inter-Integrated Circuit พัฒนาโดย Philips (NXP)"
+    },
+    {
+        "id": 12,
+        "question": "SPI ย่อมาจากอะไร?",
+        "options": ["Serial Port Interface", "Serial Peripheral Interface", "Synchronous Protocol Interface", "System Peripheral Interconnect"],
+        "answer": 1,
+        "reason": "SPI ย่อมาจาก Serial Peripheral Interface พัฒนาโดย Motorola"
+    },
+    {
+        "id": 13,
+        "question": "ในการต่อวงจร I2C สาย SDA และ SCL ต้องมีอุปกรณ์ใดเพิ่มด้วย?",
+        "options": ["ตัวเก็บประจุ (Capacitor) กรองไฟ", "ตัวต้านทาน Pull-up", "ไดโอด (Diode) ป้องกันไฟย้อน", "ทรานซิสเตอร์ (Transistor) ขยายกระแส"],
+        "answer": 1,
+        "reason": "I2C ทำงานแบบ Open-Drain จึงต้องมีตัวต้านทาน Pull-up ดึงแรงดันไฟฟ้าขึ้นเสมอเมื่อไม่มีการดึงลอจิกเป็น 0"
+    },
+    {
+        "id": 14,
+        "question": "โดยทั่วไป I2C รองรับอุปกรณ์ในบัสเดียวกันได้สูงสุดกี่ตัว (อ้างอิง 7-bit address)?",
+        "options": ["8 ตัว", "16 ตัว", "127 ตัว (ในทางทฤษฎี 128 ตัว แต่หัก address พิเศษออก)", "255 ตัว"],
+        "answer": 2,
+        "reason": "I2C ใช้ที่อยู่ขนาด 7 บิต จึงมี address เป็นไปได้ 128 หมายเลข (0-127) แต่บางค่าถูกสงวนไว้ (Reserved) ทำให้ใช้งานจริงได้ไม่เกิน 112-127 ตัว"
+    },
+    {
+        "id": 15,
+        "question": "ในการใช้จอ LCD 16x2 ร่วมกับโมดูล I2C ขาที่ต่อกับโมดูล I2C คือข้อใด?",
+        "options": ["SDA และ SCL", "Tx และ Rx", "MOSI และ MISO", "VCC และ GND เท่านั้น"],
+        "answer": 0,
+        "reason": "โมดูลแปลง I2C สำหรับ LCD 16x2 ช่วยลดสายสัญญาณให้เหลือเพียง 4 เส้น คือ VCC, GND, SDA และ SCL"
+    },
+    {
+        "id": 16,
+        "question": "ขา MISO ย่อมาจากอะไร?",
+        "options": ["Master In Slave Out", "Master Idle Slave Open", "Machine Input System Output", "Main Interface Serial Out"],
+        "answer": 0,
+        "reason": "MISO ย่อมาจาก Master In Slave Out ทำหน้าที่ส่งข้อมูลจาก Slave กลับมาให้ Master"
+    },
+    {
+        "id": 17,
+        "question": "การกำหนดความเร็ว Clock ของ I2C แบบมาตรฐาน (Standard-mode) มีความเร็วเท่าใด?",
+        "options": ["10 kbps", "100 kbps", "400 kbps", "1 Mbps"],
+        "answer": 1,
+        "reason": "Standard-mode I2C ทำงานที่ 100 kbps, Fast-mode ทำงานที่ 400 kbps"
+    },
+    {
+        "id": 18,
+        "question": "ใน SPI สัญญาณนาฬิกาถูกสร้างมาจากฝั่งใด?",
+        "options": ["ฝั่ง Slave เท่านั้น", "ฝั่ง Master เท่านั้น", "สร้างจากตัวต้านทาน Pull-up", "ไม่มีสัญญาณนาฬิกา (Asynchronous)"],
+        "answer": 1,
+        "reason": "Master เป็นผู้ควบคุมบัส จึงต้องเป็นผู้กำเนิดสัญญาณนาฬิกา (SCK/SCL) ส่งไปให้ Slave เสมอ"
+    },
+    {
+        "id": 19,
+        "question": "การใช้สายสัญญาณน้อยที่สุดเพื่อเชื่อมต่ออุปกรณ์เซนเซอร์ 2 ตัว ระหว่าง SPI และ I2C ควรเลือกแบบใด?",
+        "options": ["I2C (ใช้สาย 2 เส้นไม่นับไฟเลี้ยง)", "SPI (ใช้สาย 2 เส้น)", "ทั้งสองแบบใช้สายเท่ากัน", "SPI ประหยัดกว่าเพราะแชร์สาย CS ได้"],
+        "answer": 0,
+        "reason": "I2C ใช้แค่ SDA และ SCL ไม่ว่าจะมี Slave กี่ตัวก็ตาม แต่ SPI ต้องมีสาย CS เพิ่มตามจำนวน Slave"
+    },
+    {
+        "id": 20,
+        "question": "Arduino Uno ใช้ขาใดสำหรับ I2C (SDA, SCL)?",
+        "options": ["A0, A1", "A4 (SDA), A5 (SCL)", "D10, D11", "D0 (Rx), D1 (Tx)"],
+        "answer": 1,
+        "reason": "บนบอร์ด Arduino Uno ขาอนาล็อก A4 รองรับฟังก์ชัน SDA และ A5 รองรับฟังก์ชัน SCL"
+    },
+    {
+        "id": 21,
+        "question": "Arduino Uno ใช้ขาใดเป็นพอร์ต SPI มาตรฐานสำหรับ MOSI, MISO, SCK?",
+        "options": ["D8, D9, D10", "D11 (MOSI), D12 (MISO), D13 (SCK)", "A0, A1, A2", "D0, D1, D2"],
+        "answer": 1,
+        "reason": "ขา SPI ฮาร์ดแวร์บน Arduino Uno คือ D11 (MOSI), D12 (MISO), และ D13 (SCK)"
+    },
+    {
+        "id": 22,
+        "question": "คำสั่ง Wire.write() ใน Arduino ใช้ทำอะไร?",
+        "options": ["รอรับข้อมูลจากบัส", "ส่งข้อมูล 1 ไบต์หรือเป็นอาร์เรย์ลงบัส I2C", "จบการทำงาน I2C", "กำหนดความเร็ว I2C"],
+        "answer": 1,
+        "reason": "Wire.write() ใช้ส่งข้อมูลเข้าไปใน Buffer เตรียมส่งให้ Slave หรือ Slave เตรียมส่งให้ Master"
+    },
+    {
+        "id": 23,
+        "question": "ในการรับข้อมูลจากอุปกรณ์ Slave ใน I2C (Arduino Master) ต้องใช้คำสั่งใดเริ่ม?",
+        "options": ["Wire.requestFrom()", "Wire.beginTransmission()", "Wire.read()", "Wire.receive()"],
+        "answer": 0,
+        "reason": "Master ใช้ Wire.requestFrom(address, quantity) เพื่อร้องขอข้อมูลปริมาณที่ต้องการจาก Slave"
+    },
+    {
+        "id": 24,
+        "question": "คำสั่งใดอ่านข้อมูลไบต์แรกที่อยู่ใน Buffer ของ I2C บน Arduino?",
+        "options": ["Wire.get()", "Wire.fetch()", "Wire.read()", "Wire.available()"],
+        "answer": 2,
+        "reason": "เมื่อรับข้อมูลมาแล้ว ใช้คำสั่ง Wire.read() อ่านข้อมูลออกมาทีละไบต์"
+    },
+    {
+        "id": 25,
+        "question": "การสิ้นสุดกรอบการส่งข้อมูล I2C ด้วย Arduino ทำด้วยคำสั่งใด?",
+        "options": ["Wire.end()", "Wire.stop()", "Wire.endTransmission()", "Wire.close()"],
+        "answer": 2,
+        "reason": "Wire.endTransmission() จะเป็นการส่งบิต STOP และทำการส่งข้อมูลทั้งหมดใน Buffer ไปยัง Slave"
+    },
+    {
+        "id": 26,
+        "question": "ใน SPI, โหมดของการส่งข้อมูล (SPI Mode 0 ถึง 3) ขึ้นอยู่กับการตั้งค่าอะไรบ้าง?",
+        "options": ["CPOL (Clock Polarity) และ CPHA (Clock Phase)", "Baud rate และ Parity", "Start bit และ Stop bit", "Voltage Level"],
+        "answer": 0,
+        "reason": "SPI Mode กำหนดด้วย CPOL ว่า Clock เป็น 0 หรือ 1 ตอนว่าง และ CPHA กำหนดว่าอ่านบิตข้อมูลที่ขอบขาขึ้นหรือลง"
+    },
+    {
+        "id": 27,
+        "question": "โดยปกติสถานะสาย CS ใน SPI เป็นอะไรเมื่อไม่มีการสื่อสาร (Idle)?",
+        "options": ["LOW", "HIGH", "High Impedance", "สลับไปมา"],
+        "answer": 1,
+        "reason": "การเลือกชิป (CS/SS) ใน SPI มักเป็นแบบ Active LOW ดังนั้นตอนปกติที่ไม่ได้เลือกจะถูกดึงให้เป็น HIGH"
+    },
+    {
+        "id": 28,
+        "question": "หากใช้คำสั่ง SPI.transfer(0x55) ข้อใดกล่าวถูกต้องที่สุด?",
+        "options": ["ส่งข้อมูล 0x55 ไปยัง Slave เท่านั้น", "ส่งข้อมูล 0x55 ออก MOSI และรับข้อมูลที่เข้ามาทาง MISO ในขณะเดียวกัน", "อ่านข้อมูล 0x55 จาก Slave", "กำหนด Address ของ Slave"],
+        "answer": 1,
+        "reason": "เนื่องจาก SPI เป็น Full-Duplex การทำงาน 1 สัญญาณนาฬิกาจะทำหน้าที่ทั้งส่งข้อมูลออกไปและรับข้อมูลเข้ามาพร้อมกัน SPI.transfer() จึงส่งและคืนค่ากลับมาด้วย"
+    },
+    {
+        "id": 29,
+        "question": "ข้อใดไม่ใช่โมดูล/เซนเซอร์ที่มักเชื่อมต่อผ่านโปรโตคอล I2C?",
+        "options": ["RTC DS3231 (วงจรนาฬิกา)", "OLED 0.96 นิ้ว", "เซนเซอร์อุณหภูมิ/ความชื้น BME280", "LED กระพริบแบบธรรมดา 1 หลอด"],
+        "answer": 3,
+        "reason": "LED ธรรมดาใช้เพียงขา Digital Output ทั่วไป ไม่ต้องการโปรโตคอลที่ซับซ้อนอย่าง I2C"
+    },
+    {
+        "id": 30,
+        "question": "การนำ I2C Scanner มาใช้งานมีประโยชน์อย่างไรในการปฏิบัติงานจริง?",
+        "options": ["ช่วยซ่อมเซนเซอร์ที่เสีย", "ช่วยค้นหาและยืนยันหมายเลข Address ที่แท้จริงของอุปกรณ์ I2C บนบัส", "ช่วยเปลี่ยน Address ของอุปกรณ์", "ช่วยลดสัญญาณรบกวนในสายสัญญาณ"],
+        "answer": 1,
+        "reason": "I2C Scanner จะไล่ส่งคำขอตั้งแต่ Address 1 ถึง 127 ถ้าอุปกรณ์ตัวไหนตอบกลับ (ACK) แปลว่ามีอุปกรณ์อยู่และได้ Address มาใช้งานได้อย่างถูกต้อง"
+    }
+]

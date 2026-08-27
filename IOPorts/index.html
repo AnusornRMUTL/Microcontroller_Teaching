@@ -111,6 +111,29 @@
                     </div>
                 </div>
             </div>
+            <!-- Theory 1.3: Debouncing -->
+            <div style="margin-top: 25px; padding-top: 15px; border-top: 2px dashed #e2e8f0;">
+                <h3 style="color: #00979C;">🛡️ การแก้ปัญหาสวิตช์กระเพื่อม (Switch Debouncing)</h3>
+                <p>หน้าสัมผัสของสวิตช์แบบกลไก (Mechanical Switch) จะเกิดการสั่นกระเพื่อม (Bounce) เมื่อถูกกดหรือปล่อย ทำให้ไมโครคอนโทรลเลอร์ที่ทำงานเร็วมาก อ่านค่าเป็น 0 และ 1 สลับกันหลายครั้งในเสี้ยววินาที (ปัญหา Debounce)</p>
+                <div class="theory-grid" style="margin-top: 10px;">
+                    <div class="theory-box" style="border-left-color: #f59e0b;">
+                        <h4 style="color: #f59e0b;">1. แก้ด้วย Hardware (RC Filter)</h4>
+                        <p>ต่อตัวเก็บประจุ (Capacitor) ขนาด 0.1µF คร่อมสวิตช์ร่วมกับตัวต้านทาน เพื่อหน่วงเวลาการเปลี่ยนแปลงแรงดัน ช่วยกรองสัญญาณกระเพื่อมออกไป</p>
+                    </div>
+                    <div class="theory-box" style="border-left-color: #10b981;">
+                        <h4 style="color: #10b981;">2. แก้ด้วย Software (Delay) ✨ นิยมที่สุด</h4>
+                        <p>ใช้คำสั่งหน่วงเวลาเล็กน้อย (เช่น 10-50 ms) เมื่อพบว่ามีการกดปุ่ม แล้วจึงอ่านค่าซ้ำอีกครั้งเพื่อยืนยันสถานะที่นิ่งแล้ว</p>
+                        <div style="background: #f8fafc; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; margin-top: 8px;">
+                            if(digitalRead(btn) == LOW) {<br>
+                            &nbsp;&nbsp;delay(50); // รอหน้าสัมผัสนิ่ง<br>
+                            &nbsp;&nbsp;if(digitalRead(btn) == LOW) {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;// ปุ่มถูกกดจริง<br>
+                            &nbsp;&nbsp;}<br>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Section 2: Simulator -->
@@ -221,18 +244,11 @@
 
         <!-- Section 3: Quiz -->
         <section id="quiz" class="content-section card">
-            <h2>3. แบบทดสอบท้ายบท (Quiz)</h2>
-            <p>ทดสอบความเข้าใจเกี่ยวกับการใช้งาน I/O Port ของ Arduino UNO</p>
-            
+            <h2><i class="fas fa-tasks"></i> แบบทดสอบท้ายบท</h2>
+            <p>ทดสอบความเข้าใจเกี่ยวกับการใช้งานพอร์ตดิจิทัล I/O</p>
             <div id="quiz-container" class="quiz-container">
-                <!-- Quiz dynamically injected here by JS -->
+                <!-- Advanced Quiz will be injected here -->
             </div>
-            
-            <div class="quiz-actions">
-                <button id="btn-submit-quiz" class="btn btn-primary">ส่งคำตอบ</button>
-                <button id="btn-retry-quiz" class="btn btn-secondary hidden">กลับไปทำแบบทดสอบใหม่</button>
-            </div>
-            <div id="quiz-result" class="quiz-result hidden"></div>
         </section>
 
     </main>

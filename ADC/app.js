@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initNavigation();
     initCodeEditors();
     initSimulators();
-    initQuiz();
+    renderQuizHTML(document.getElementById('quiz-container'));
 });
 
 function initNavigation() {
@@ -262,110 +262,215 @@ async function runAnimation2() {
 }
 
 // ---- QUIZ ----
-const quizData = [
-    { q: "1. สัญญาณชนิดใดที่มีการเปลี่ยนแปลงอย่างต่อเนื่อง?", options: ["Digital Signal", "Analog Signal", "Discrete Signal", "Binary Signal"], ans: 1 },
-    { q: "2. วงจรที่ใช้แปลงสัญญาณแอนะล็อกเป็นดิจิทัลเรียกว่าอะไร?", options: ["DAC", "ADC", "PWM", "UART"], ans: 1 },
-    { q: "3. ขั้นตอนใดใน ADC ที่ทำหน้าที่ค้างค่าแรงดันไว้ให้คงที่ชั่วขณะ?", options: ["Sampling", "Holding", "Quantizing", "Encoding"], ans: 1 },
-    { q: "4. ความละเอียด (Resolution) ของ ADC บนชิป ESP32 คือกี่บิต?", options: ["8-bit", "10-bit", "12-bit", "16-bit"], ans: 2 },
-    { q: "5. ค่าดิจิทัลสูงสุดที่อ่านได้จาก ADC 12-bit คือเท่าใด?", options: ["255", "1023", "4095", "65535"], ans: 2 },
-    { q: "6. ช่วงแรงดันสูงสุดของขา Analog Input ของ ESP32 โดยทั่วไปคือเท่าใด?", options: ["1.8V", "3.3V", "5.0V", "12V"], ans: 1 },
-    { q: "7. ฟังก์ชันใดใน Arduino IDE ที่ใช้สำหรับอ่านค่าจากขาแอนะล็อก?", options: ["digitalRead()", "analogWrite()", "analogRead()", "readADC()"], ans: 2 },
-    { q: "8. ในตัวอย่างที่ 1 หากต้องการแปลงค่า 0-4095 ให้อยู่ในช่วง 0-255 ควรใช้คำสั่งใด?", options: ["map()", "constrain()", "shiftOut()", "analogWrite()"], ans: 0 },
-    { q: "9. หากค่า ADC เท่ากับ 2048 คิดเป็นแรงดันไฟฟ้าประมาณเท่าใด (บน ESP32 ที่รับ 3.3V ได้เต็ม)?", options: ["1.65V", "3.3V", "5V", "0V"], ans: 0 },
-    { q: "10. หากต้องการส่งค่าจากไมโครคอนโทรลเลอร์แสดงผลบนหน้าจอคอมพิวเตอร์ผ่านสาย USB ใช้ฟังก์ชันใด?", options: ["analogWrite()", "Serial.print()", "SPI.transfer()", "Wire.write()"], ans: 1 }
-];
+// ==========================================
+// Quiz Logic (Advanced Engine)
+// ==========================================
+let quizQuestions = [];
+let currentQuizSession = [];
+let userScore = 0;
+let userAnswers = {};
 
-let userAnswers = new Array(quizData.length).fill(null);
+async function fetchQuizData() {
+    try {
+        const response = await fetch('questions.json');
+        quizQuestions = await response.json();
+    } catch (e) {
+        console.error("Error loading questions:", e);
+    }
+}
 
-function initQuiz() {
-    const container = document.getElementById('quiz-container');
-    let html = '';
+function shuffleArray(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+async function renderQuizHTML(container) {
+    container.innerHTML = `<div class="card"><div style="text-align:center; padding:50px;">กำลังโหลดข้อสอบ...</div></div>`;
     
-    quizData.forEach((q, index) => {
-        html += `
-            <div class="quiz-question" id="q${index}">
-                <p><strong>${q.q}</strong></p>
-                <div class="quiz-options">
-                    ${q.options.map((opt, optIndex) => `
-                        <label>
-                            <input type="radio" name="question${index}" value="${optIndex}" onchange="selectAnswer(${index}, ${optIndex})">
-                            ${opt}
-                        </label>
-                    `).join('')}
+    if (quizQuestions.length === 0) {
+        await fetchQuizData();
+    }
+    
+    currentQuizSession = shuffleArray(quizQuestions).slice(0, 10);
+    userScore = 0;
+    userAnswers = {};
+
+    let html = `<div>
+        <p style="color: #64748b;">ระบบจะสุ่มข้อสอบ 10 ข้อ จากฐานข้อมูล ต้องได้คะแนน <strong>8/10 ขึ้นไป</strong> จึงจะได้รับใบประกาศนียบัตร</p>
+        <div id="quiz-list" style="margin-top: 25px;">`;
+
+    currentQuizSession.forEach((q, i) => {
+        html += `<div class="quiz-question" id="q-block-${i}" style="margin-bottom: 25px; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; background: #fff;">
+            <p style="font-weight: 600; font-size: 1.1rem; margin-bottom: 15px; color: #1e293b;">ข้อ ${i + 1}: ${q.question}</p>
+            <div class="quiz-options">`;
+        q.options.forEach((opt, j) => {
+            html += `
+                <div class="quiz-option" id="opt-div-${i}-${j}" style="padding: 12px 15px; border: 2px solid #e2e8f0; margin-bottom: 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;" onclick="selectAnswer(${i}, ${j})">
+                    ${opt}
+                </div>
+            `;
+        });
+        html += `</div>
+            <div id="reason-${i}" style="display: none; margin-top: 15px; padding: 15px; border-radius: 6px; font-size: 0.95rem; line-height: 1.5;"></div>
+        </div>`;
+    });
+
+    html += `</div>
+        <div id="quiz-final-result" style="text-align: center; margin-top: 30px; display: none;"></div>
+    </div>`;
+    
+    container.innerHTML = html;
+}
+
+window.selectAnswer = function(qIndex, selectedOptIndex) {
+    if (userAnswers[qIndex] !== undefined) return;
+    
+    userAnswers[qIndex] = selectedOptIndex;
+    const q = currentQuizSession[qIndex];
+    const isCorrect = selectedOptIndex === q.answer;
+    
+    if (isCorrect) userScore++;
+
+    q.options.forEach((_, j) => {
+        const optDiv = document.getElementById(`opt-div-${qIndex}-${j}`);
+        optDiv.style.cursor = 'default';
+        if (j === q.answer) {
+            optDiv.style.backgroundColor = '#dcfce7'; 
+            optDiv.style.borderColor = '#22c55e';
+            optDiv.style.color = '#14532d';
+            optDiv.style.fontWeight = 'bold';
+        } else if (j === selectedOptIndex && !isCorrect) {
+            optDiv.style.backgroundColor = '#fee2e2'; 
+            optDiv.style.borderColor = '#ef4444';
+            optDiv.style.color = '#7f1d1d';
+        } else {
+            optDiv.style.opacity = '0.6';
+        }
+    });
+
+    const reasonDiv = document.getElementById(`reason-${qIndex}`);
+    reasonDiv.style.display = 'block';
+    if (isCorrect) {
+        reasonDiv.style.backgroundColor = '#f0fdf4';
+        reasonDiv.style.borderLeft = '4px solid #22c55e';
+        reasonDiv.innerHTML = `<span style="color: #15803d; font-weight: bold; font-size: 1.05rem;">✅ ถูกต้อง!</span><br><div style="margin-top: 5px; color: #334155;"><strong>เหตุผล:</strong> ${q.reason}</div>`;
+    } else {
+        reasonDiv.style.backgroundColor = '#fef2f2';
+        reasonDiv.style.borderLeft = '4px solid #ef4444';
+        reasonDiv.innerHTML = `<span style="color: #b91c1c; font-weight: bold; font-size: 1.05rem;">❌ ผิดครับ!</span><br><div style="margin-top: 5px; color: #334155;"><strong>เหตุผล:</strong> ${q.reason}</div>`;
+    }
+
+    if (Object.keys(userAnswers).length === currentQuizSession.length) {
+        showFinalResult();
+    }
+};
+
+function showFinalResult() {
+    const resDiv = document.getElementById('quiz-final-result');
+    resDiv.style.display = 'block';
+    const passThreshold = 8;
+    
+    if (userScore >= passThreshold) {
+        resDiv.innerHTML = `
+            <div style="background: #f0fdf4; padding: 30px; border-radius: 12px; border: 2px solid #22c55e; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="color: #15803d; margin-top: 0; font-size: 1.8rem;">🎉 ยินดีด้วย! คุณสอบผ่าน</h2>
+                <p style="font-size: 1.2rem; color: #334155;">ได้คะแนน <strong>${userScore} / 10</strong></p>
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #cbd5e1;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: bold; color: #1e293b;">กรุณากรอก ชื่อ-นามสกุล เพื่อรับใบประกาศนียบัตร:</label>
+                    <input type="text" id="cert-name" placeholder="นายวิศวกร ยอดเยี่ยม" style="padding: 12px; width: 100%; max-width: 350px; border: 1px solid #94a3b8; border-radius: 6px; font-size: 1.05rem; font-family: 'Sarabun', sans-serif;">
+                    <br>
+                    <button class="action-btn" style="margin-top: 20px; font-size: 1.1rem; padding: 12px 24px;" onclick="generateCertificate()">พิมพ์ใบประกาศนียบัตร</button>
+                </div>
+                <div id="cert-container" style="margin-top: 30px; display: none;">
+                    <canvas id="cert-canvas" width="800" height="566" style="max-width: 100%; border: 1px solid #cbd5e1; border-radius: 4px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);"></canvas>
+                    <br>
+                    <a id="cert-download" class="action-btn" style="display: inline-block; margin-top: 20px; text-decoration: none; background: #0ea5e9;">⬇️ ดาวน์โหลดใบประกาศ (PNG)</a>
                 </div>
             </div>
         `;
-    });
+    } else {
+        resDiv.innerHTML = `
+            <div style="background: #fef2f2; padding: 30px; border-radius: 12px; border: 2px solid #ef4444; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="color: #b91c1c; margin-top: 0; font-size: 1.8rem;">คุณยังไม่ผ่านเกณฑ์ 75%</h2>
+                <p style="font-size: 1.2rem; color: #334155;">ได้คะแนน <strong>${userScore} / 10</strong> (ต้องได้ 8 คะแนนขึ้นไป)</p>
+                <button class="action-btn secondary-btn" style="margin-top: 20px; font-size: 1.1rem; padding: 12px 24px;" onclick="renderQuizHTML(document.getElementById('quiz-container'))">ทดสอบใหม่ (สุ่มข้อสอบใหม่)</button>
+            </div>
+        `;
+    }
     
-    container.innerHTML = html;
-    
-    const submitBtn = document.getElementById('submit-quiz');
-    if (submitBtn) submitBtn.addEventListener('click', gradeQuiz);
-    
-    const retryBtn = document.getElementById('retry-quiz');
-    if (retryBtn) retryBtn.addEventListener('click', resetQuiz);
+    setTimeout(() => {
+        resDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
 }
 
-window.selectAnswer = function(qIndex, optIndex) {
-    userAnswers[qIndex] = optIndex;
-};
-
-function gradeQuiz() {
-    if(userAnswers.includes(null)) {
-        alert("กรุณาตอบคำถามให้ครบทุกข้อก่อนส่งคำตอบ");
+window.generateCertificate = function() {
+    const nameInput = document.getElementById('cert-name').value.trim();
+    if (!nameInput) {
+        alert("กรุณากรอกชื่อ-นามสกุลก่อนพิมพ์ใบประกาศฯ");
         return;
     }
-    
-    let score = 0;
-    
-    quizData.forEach((q, index) => {
-        const questionDiv = document.getElementById(`q${index}`);
-        const labels = questionDiv.querySelectorAll('label');
-        
-        labels.forEach(l => {
-            l.classList.remove('correct', 'incorrect');
-            const input = l.querySelector('input');
-            input.disabled = true;
-        });
-        
-        const userAns = userAnswers[index];
-        if (userAns === q.ans) {
-            score++;
-            labels[userAns].classList.add('correct');
-        } else {
-            labels[userAns].classList.add('incorrect');
-            labels[q.ans].classList.add('correct');
-        }
-    });
-    
-    const resultDiv = document.getElementById('quiz-result');
-    resultDiv.innerText = `คะแนนของคุณ: ${score} / 10`;
-    resultDiv.style.color = score === 10 ? 'var(--quiz-correct)' : 'var(--quiz-incorrect)';
-    
-    document.getElementById('submit-quiz').style.display = 'none';
-    if (score < 10) {
-        document.getElementById('retry-quiz').style.display = 'block';
-    }
-}
 
-function resetQuiz() {
-    userAnswers = new Array(quizData.length).fill(null);
+    const canvas = document.getElementById('cert-canvas');
+    const ctx = canvas.getContext('2d');
     
-    quizData.forEach((q, index) => {
-        const questionDiv = document.getElementById(`q${index}`);
-        const labels = questionDiv.querySelectorAll('label');
-        const inputs = questionDiv.querySelectorAll('input');
-        
-        labels.forEach(l => l.classList.remove('correct', 'incorrect'));
-        inputs.forEach(i => {
-            i.checked = false;
-            i.disabled = false;
-        });
-    });
+    ctx.fillStyle = '#f8fafc';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    document.getElementById('quiz-result').innerText = '';
-    document.getElementById('submit-quiz').style.display = 'block';
-    document.getElementById('retry-quiz').style.display = 'none';
+    ctx.lineWidth = 15;
+    ctx.strokeStyle = '#00979C'; 
+    ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.strokeRect(32, 32, canvas.width - 64, canvas.height - 64);
+
+    ctx.fillStyle = '#00979C';
+    ctx.beginPath(); ctx.arc(40, 40, 10, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(canvas.width-40, 40, 10, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(40, canvas.height-40, 10, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(canvas.width-40, canvas.height-40, 10, 0, Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = '#1e293b';
+    ctx.font = 'bold 40px "Sarabun", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('ใบประกาศนียบัตร', canvas.width/2, 120);
+
+    ctx.font = '22px "Sarabun", sans-serif';
+    ctx.fillStyle = '#64748b';
+    ctx.fillText('ขอมอบประกาศนียบัตรฉบับนี้เพื่อแสดงว่า', canvas.width/2, 180);
+
+    ctx.font = 'bold 46px "Sarabun", sans-serif';
+    ctx.fillStyle = '#00979C';
+    ctx.fillText(nameInput, canvas.width/2, 250);
+
+    ctx.font = '22px "Sarabun", sans-serif';
+    ctx.fillStyle = '#1e293b';
+    ctx.fillText('ได้ผ่านการทดสอบความรู้ โมดูล 3: แอนะล็อกอินพุต (ADC)', canvas.width/2, 320);
+    ctx.fillText('หลักสูตรไมโครคอนโทรลเลอร์ (ระดับ ปวส.)', canvas.width/2, 360);
+
+    ctx.font = 'bold 28px "Sarabun", sans-serif';
+    ctx.fillStyle = '#ef4444'; 
+    ctx.fillText(`ด้วยคะแนน ${userScore}/10 (${userScore*10}%)`, canvas.width/2, 420);
+
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+    ctx.font = '18px "Sarabun", sans-serif';
+    ctx.fillStyle = '#64748b';
+    ctx.fillText(`วันที่ผ่านการทดสอบ: ${dateStr}`, canvas.width/2, 480);
+
+    ctx.beginPath();
+    ctx.moveTo(canvas.width/2 - 120, 520);
+    ctx.lineTo(canvas.width/2 + 120, 520);
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 1;
+    ctx.stroke();
     
-    document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
-}
+    document.getElementById('cert-container').style.display = 'block';
+
+    const link = document.getElementById('cert-download');
+    link.download = `Certificate_${nameInput.replace(/\s+/g, '_')}.png`;
+    link.href = canvas.toDataURL('image/png');
+};

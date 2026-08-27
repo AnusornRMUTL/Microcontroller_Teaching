@@ -749,6 +749,37 @@
                     </div>
                 </div>
 
+                <!-- Card 5: Analog Reference (AREF) -->
+                <div class="card">
+                    <h2 class="section-title">แรงดันอ้างอิง (Analog Reference - AREF)</h2>
+                    <p>ตามปกติ ADC จะเปรียบเทียบแรงดันอินพุตกับแรงดันเลี้ยงของบอร์ด (เช่น 5V สำหรับ Arduino Uno) แต่ในกรณีที่เซนเซอร์ของเรามีแรงดันสูงสุดแค่ 3.3V หรือ 1.1V การอ้างอิงกับ 5V จะทำให้สูญเสียความละเอียดไปมาก เราจึงใช้ขา <strong>AREF</strong> เพื่อป้อนแรงดันอ้างอิงเฉพาะเจาะจงเข้าไปแทน</p>
+                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6; margin-top: 10px;">
+                        <h4 style="color: #1d4ed8; margin-bottom: 5px;">ตัวอย่างการใช้คำสั่ง (Arduino Uno)</h4>
+                        <code style="font-family: monospace; font-size: 0.95rem;">analogReference(EXTERNAL); // แจ้งให้บอร์ดใช้แรงดันจากขา AREF แทน 5V</code>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">* หมายเหตุ: ต้องต่อแรงดันอ้างอิงเข้าขา AREF ก่อนเรียกคำสั่งนี้ ห้ามเกิน 5V</p>
+                    </div>
+                </div>
+
+                <!-- Card 6: Moving Average Filter -->
+                <div class="card">
+                    <h2 class="section-title">เทคนิคกรองสัญญาณรบกวน (Moving Average Filter)</h2>
+                    <p>ในการวัดจริง ค่า ADC อาจมีการแกว่งเนื่องจากสัญญาณรบกวน (Noise) วิธีแก้ไขด้วยซอฟต์แวร์ที่นิยมที่สุดในระดับ ปวส. คือการหา <strong>ค่าเฉลี่ยเคลื่อนที่ (Moving Average)</strong></p>
+                    <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 10px;">หลักการคือ: อ่านค่าหลายๆ ครั้ง (เช่น 10 ครั้ง) นำมารวมกัน แล้วหารด้วยจำนวนครั้ง เพื่อให้ได้ค่าที่นิ่งและเสถียรขึ้น</p>
+                    
+                    <div class="code-editor" style="background: #f1f5f9; padding: 15px;">
+                        <pre style="margin:0;"><code style="font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #334155;">
+<span class="kw">int</span> <span class="func">readStableADC</span>(<span class="kw">int</span> pin) {
+  <span class="kw">long</span> sum = 0;
+  <span class="kw">for</span> (<span class="kw">int</span> i = 0; i &lt; 10; i++) {
+    sum += <span class="func">analogRead</span>(pin); <span class="cmt">// อ่านค่า 10 ครั้งสะสมไว้</span>
+    <span class="func">delay</span>(2); <span class="cmt">// หน่วงเวลาเล็กน้อยให้ ADC ทำงาน</span>
+  }
+  <span class="kw">return</span> sum / 10; <span class="cmt">// ส่งคืนค่าเฉลี่ย</span>
+}
+                        </code></pre>
+                    </div>
+                </div>
+
             </section>
 
             <!-- Section 2: Ex 1 -->
@@ -823,14 +854,8 @@
             <!-- Section 4: Quiz -->
             <section id="quiz">
                 <h1>แบบทดสอบท้ายบท</h1>
-                <div class="card">
-                    <p>จงเลือกคำตอบที่ถูกต้องที่สุด (10 ข้อ)</p>
-                    <div id="quiz-container">
-                        <!-- Quiz questions injected here -->
-                    </div>
-                    <button id="submit-quiz" class="btn" style="margin-top: 1rem; width: 100%; padding: 1rem; font-size: 1.2rem;">ส่งคำตอบ</button>
-                    <div id="quiz-result" class="quiz-result"></div>
-                    <button id="retry-quiz" class="btn" style="margin-top: 1rem; width: 100%; padding: 1rem; font-size: 1.2rem; display: none; background-color: var(--secondary);">กลับไปทำแบบทดสอบใหม่</button>
+                <div class="card" id="quiz-container">
+                    <!-- Advanced Quiz will be injected here -->
                 </div>
             </section>
 

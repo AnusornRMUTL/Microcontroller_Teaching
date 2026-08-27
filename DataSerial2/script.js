@@ -627,54 +627,217 @@ const contentData = {
 
 
 // =============================================
-// Quiz Questions (30 Questions)
+// Quiz Logic (Advanced Engine)
 // =============================================
+let quizQuestions = [];
+let currentQuizSession = [];
+let userScore = 0;
+let userAnswers = {};
 
-const quizQuestions = [
-    // --- UART Questions (1-10) ---
-    { q: "1. UART ย่อมาจากอะไร?", options: ["Universal Asynchronous Receiver/Transmitter", "Universal Analog Receiver/Transmitter", "Unified Asynchronous Router/Transmitter", "Universal Automatic Receiver/Transmitter"], answer: 0 },
-    { q: "2. UART เป็นการสื่อสารแบบใด?", options: ["Synchronous (ใช้สายนาฬิกา)", "Asynchronous (ไม่ใช้สายนาฬิกา)", "Parallel (แบบขนาน)", "Wireless (ไร้สาย)"], answer: 1 },
-    { q: "3. ขาใดใช้สำหรับส่งข้อมูลใน UART?", options: ["Rx (Receive)", "SCL (Clock)", "Tx (Transmit)", "SDA (Data)"], answer: 2 },
-    { q: "4. การเชื่อมต่อ UART ระหว่างสองอุปกรณ์ต้องต่อสายอย่างไร?", options: ["Tx ต่อ Tx, Rx ต่อ Rx", "Tx ต่อ Rx, Rx ต่อ Tx (ต่อไขว้)", "Tx ต่อ VCC, Rx ต่อ GND", "ใช้เพียงเส้นเดียว"], answer: 1 },
-    { q: "5. Baud rate ใน UART คืออะไร?", options: ["ความจุของหน่วยความจำ", "ความเร็วในการรับส่งข้อมูล (bits per second)", "ระดับแรงดันไฟฟ้าของสัญญาณ", "ระยะทางสูงสุดที่ส่งได้"], answer: 1 },
-    { q: "6. สิ่งใดที่ 'จำเป็น' ต้องตั้งให้ตรงกันทั้งสองฝั่งในการส่ง UART?", options: ["ความจุของแบตเตอรี่", "รุ่นของไมโครคอนโทรลเลอร์", "สีของสายไฟ", "Baud rate (ความเร็ว)"], answer: 3 },
-    { q: "7. UART Data Frame เริ่มต้นด้วยบิตใด?", options: ["Start bit (ลอจิก 0 / LOW)", "Start bit (ลอจิก 1 / HIGH)", "Stop bit", "Parity bit"], answer: 0 },
-    { q: "8. UART Data Frame สิ้นสุดด้วยบิตใด?", options: ["Start bit", "Parity bit", "Stop bit (ลอจิก 1 / HIGH)", "Data bit"], answer: 2 },
-    { q: "9. Parity bit ใน UART มีหน้าที่อะไร?", options: ["เพิ่มความเร็วในการส่ง", "ตรวจสอบความผิดพลาดของข้อมูล (Error Detection)", "ลดเสียงรบกวน", "กำหนด Baud rate"], answer: 1 },
-    { q: "10. ค่ามาตรฐาน '9600 8N1' หมายถึงอะไร?", options: ["ส่งได้ 9600 เมตร, 8 สาย, ไม่ใช้ Parity", "Baud 9600, Data 8 bits, No parity, Stop 1 bit", "9600 ไบต์, 8 ช่อง, 1 เฟรม", "ไม่มีข้อใดถูก"], answer: 1 },
+async function fetchQuizData() {
+    try {
+        const response = await fetch('questions.json');
+        quizQuestions = await response.json();
+    } catch (e) {
+        console.error("Error loading questions:", e);
+    }
+}
 
-    // --- RS232 Questions (11-20) ---
-    { q: "11. มาตรฐาน RS232 สร้างขึ้นเพื่อแก้ปัญหาใดของ UART?", options: ["ลดจำนวนสายไฟ", "เพิ่มระดับแรงดันไฟฟ้าเพื่อให้ส่งข้อมูลได้ไกลขึ้น", "เปลี่ยนให้เป็นแบบไร้สาย", "เพิ่มความเร็ว Clock"], answer: 1 },
-    { q: "12. ระดับแรงดันไฟฟ้าของ RS232 สำหรับลอจิก '1' (Mark) คือเท่าใด?", options: ["0V ถึง 5V", "3.3V", "-3V ถึง -15V", "+3V ถึง +15V"], answer: 2 },
-    { q: "13. ระดับแรงดันไฟฟ้าของ RS232 สำหรับลอจิก '0' (Space) คือเท่าใด?", options: ["0V ถึง 5V", "3.3V", "-3V ถึง -15V", "+3V ถึง +15V"], answer: 3 },
-    { q: "14. พอร์ตมาตรฐานที่นิยมใช้กับ RS232 คือพอร์ตใด?", options: ["USB", "HDMI", "DB9 (9 pin)", "VGA"], answer: 2 },
-    { q: "15. RS232 สามารถต่ออุปกรณ์ได้สูงสุดกี่ตัวบนสายเดียวกัน?", options: ["2 ตัว (Point-to-Point)", "10 ตัว", "32 ตัว", "128 ตัว"], answer: 0 },
-    { q: "16. ระยะทางสูงสุดที่ RS232 ทำงานได้ดีอยู่ที่ประมาณเท่าใด?", options: ["1 เมตร", "15 เมตร (50 ฟุต)", "1,000 เมตร", "10 กิโลเมตร"], answer: 1 },
-    { q: "17. ไอซีที่แปลงระดับแรงดัน TTL เป็น RS232 ที่นิยมใช้คือเบอร์ใด?", options: ["L298N", "NE555", "MAX232", "MAX485"], answer: 2 },
-    { q: "18. หากต่อ Tx ของ UART (5V) เข้ากับอุปกรณ์ RS232 โดยตรง จะเกิดอะไรขึ้น?", options: ["ทำงานปกติ", "อุปกรณ์อาจเสียหาย เพราะแรงดันไม่ตรงมาตรฐาน", "ส่งข้อมูลเร็วขึ้น", "ไม่มีผลใด ๆ"], answer: 1 },
-    { q: "19. โครงสร้าง Data Frame ของ RS232 เป็นอย่างไร?", options: ["เหมือน UART ทุกประการ แต่แรงดันถูกกลับ (Inverted)", "แตกต่างจาก UART อย่างสิ้นเชิง", "ไม่มี Start bit", "ไม่มี Stop bit"], answer: 0 },
-    { q: "20. RS232 สามารถสื่อสารแบบ Full-Duplex ได้หรือไม่?", options: ["ไม่ได้เลย", "ได้ เพราะมีสาย Tx และ Rx แยกกัน", "ได้เฉพาะ Baud rate ต่ำ", "ได้เฉพาะตอนกลางวัน"], answer: 1 },
+function shuffleArray(array) {
+    let arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
 
-    // --- RS485 Questions (21-30) ---
-    { q: "21. คุณสมบัติเด่นของสัญญาณแบบ RS485 คืออะไร?", options: ["ไร้สาย", "ใช้สัญญาณแบบ Differential (สาย A และ B)", "ใช้แสงในการส่งข้อมูล", "อ้างอิงไฟ 220V"], answer: 1 },
-    { q: "22. RS485 สามารถส่งข้อมูลได้ไกลสูงสุดประมาณเท่าใด?", options: ["15 เมตร", "100 เมตร", "1,200 เมตร (4,000 ฟุต)", "10 กิโลเมตร"], answer: 2 },
-    { q: "23. จำนวนอุปกรณ์สูงสุดบนบัส RS485 มาตรฐานคือเท่าใด?", options: ["2 ตัว", "10 ตัว", "32 ตัว", "256 ตัว"], answer: 2 },
-    { q: "24. การสื่อสาร RS485 (ระบบ 2 สาย) เป็นแบบใด?", options: ["Simplex (ส่งทางเดียว)", "Half-Duplex (สลับกันส่งและรับ)", "Full-Duplex", "No-Duplex"], answer: 1 },
-    { q: "25. โปรโตคอลที่นิยมใช้บน RS485 มากที่สุดในงานอุตสาหกรรมคือโปรโตคอลใด?", options: ["HTTP", "Modbus RTU", "Bluetooth", "I2C"], answer: 1 },
-    { q: "26. Modbus RTU Frame ประกอบด้วยส่วนใดบ้าง?", options: ["Header, Body, Footer", "Slave Address, Function Code, Data, CRC-16", "IP, Port, Payload", "Start, Data, Parity, Stop"], answer: 1 },
-    { q: "27. Function Code 0x03 ใน Modbus RTU ใช้ทำอะไร?", options: ["Write Single Coil", "Read Holding Registers (อ่านค่า Register)", "Write Multiple Registers", "Read Coils"], answer: 1 },
-    { q: "28. Terminating Resistor ที่ปลายสาย RS485 มีค่ากี่โอห์ม?", options: ["10 โอห์ม", "47 โอห์ม", "120 โอห์ม", "1000 โอห์ม"], answer: 2 },
-    { q: "29. ในระบบ Modbus RTU ใครเป็นผู้เริ่มส่งคำสั่งเสมอ?", options: ["Slave ตัวใดก็ได้", "Master เท่านั้น", "ส่งพร้อมกันทุกตัว", "Router"], answer: 1 },
-    { q: "30. ข้อใดคือเหตุผลหลักที่โรงงานอุตสาหกรรมนิยมใช้ RS485?", options: ["ราคาแพงที่สุด", "ทนทานต่อสัญญาณรบกวนดีเยี่ยมและลากสายได้ไกล", "ความเร็วสูงกว่า USB 3.0", "ไม่ต้องเขียนโปรแกรม"], answer: 1 }
-];
+async function renderQuizHTML(container) {
+    container.innerHTML = `<div class="card"><div style="text-align:center; padding:50px;">กำลังโหลดข้อสอบ...</div></div>`;
+    
+    if (quizQuestions.length === 0) {
+        await fetchQuizData();
+    }
+    
+    currentQuizSession = shuffleArray(quizQuestions).slice(0, 10);
+    userScore = 0;
+    userAnswers = {};
 
+    let html = `<div>
+        <p style="color: #64748b;">ระบบจะสุ่มข้อสอบ 10 ข้อ จากฐานข้อมูล ต้องได้คะแนน <strong>8/10 ขึ้นไป</strong> จึงจะได้รับใบประกาศนียบัตร</p>
+        <div id="quiz-list" style="margin-top: 25px;">`;
 
-// =============================================
-// Navigation & Quiz Engine
-// =============================================
+    currentQuizSession.forEach((q, i) => {
+        html += `<div class="quiz-question" id="q-block-${i}" style="margin-bottom: 25px; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; background: #fff;">
+            <p style="font-weight: 600; font-size: 1.1rem; margin-bottom: 15px; color: #1e293b;">ข้อ ${i + 1}: ${q.question}</p>
+            <div class="quiz-options">`;
+        q.options.forEach((opt, j) => {
+            html += `
+                <div class="quiz-option" id="opt-div-${i}-${j}" style="padding: 12px 15px; border: 2px solid #e2e8f0; margin-bottom: 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;" onclick="selectAnswer(${i}, ${j})">
+                    ${opt}
+                </div>
+            `;
+        });
+        html += `</div>
+            <div id="reason-${i}" style="display: none; margin-top: 15px; padding: 15px; border-radius: 6px; font-size: 0.95rem; line-height: 1.5;"></div>
+        </div>`;
+    });
 
-let currentQuestion = 0;
-let score = 0;
+    html += `</div>
+        <div id="quiz-final-result" style="text-align: center; margin-top: 30px; display: none;"></div>
+    </div>`;
+    
+    container.innerHTML = html;
+}
+
+window.selectAnswer = function(qIndex, selectedOptIndex) {
+    if (userAnswers[qIndex] !== undefined) return;
+    
+    userAnswers[qIndex] = selectedOptIndex;
+    const q = currentQuizSession[qIndex];
+    const isCorrect = selectedOptIndex === q.answer;
+    
+    if (isCorrect) userScore++;
+
+    q.options.forEach((_, j) => {
+        const optDiv = document.getElementById(`opt-div-${qIndex}-${j}`);
+        optDiv.style.cursor = 'default';
+        if (j === q.answer) {
+            optDiv.style.backgroundColor = '#dcfce7'; 
+            optDiv.style.borderColor = '#22c55e';
+            optDiv.style.color = '#14532d';
+            optDiv.style.fontWeight = 'bold';
+        } else if (j === selectedOptIndex && !isCorrect) {
+            optDiv.style.backgroundColor = '#fee2e2'; 
+            optDiv.style.borderColor = '#ef4444';
+            optDiv.style.color = '#7f1d1d';
+        } else {
+            optDiv.style.opacity = '0.6';
+        }
+    });
+
+    const reasonDiv = document.getElementById(`reason-${qIndex}`);
+    reasonDiv.style.display = 'block';
+    if (isCorrect) {
+        reasonDiv.style.backgroundColor = '#f0fdf4';
+        reasonDiv.style.borderLeft = '4px solid #22c55e';
+        reasonDiv.innerHTML = `<span style="color: #15803d; font-weight: bold; font-size: 1.05rem;">✅ ถูกต้อง!</span><br><div style="margin-top: 5px; color: #334155;"><strong>เหตุผล:</strong> ${q.reason}</div>`;
+    } else {
+        reasonDiv.style.backgroundColor = '#fef2f2';
+        reasonDiv.style.borderLeft = '4px solid #ef4444';
+        reasonDiv.innerHTML = `<span style="color: #b91c1c; font-weight: bold; font-size: 1.05rem;">❌ ผิดครับ!</span><br><div style="margin-top: 5px; color: #334155;"><strong>เหตุผล:</strong> ${q.reason}</div>`;
+    }
+
+    if (Object.keys(userAnswers).length === currentQuizSession.length) {
+        showFinalResult();
+    }
+};
+
+function showFinalResult() {
+    const resDiv = document.getElementById('quiz-final-result');
+    resDiv.style.display = 'block';
+    const passThreshold = 8;
+    
+    if (userScore >= passThreshold) {
+        resDiv.innerHTML = `
+            <div style="background: #f0fdf4; padding: 30px; border-radius: 12px; border: 2px solid #22c55e; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="color: #15803d; margin-top: 0; font-size: 1.8rem;">🎉 ยินดีด้วย! คุณสอบผ่าน</h2>
+                <p style="font-size: 1.2rem; color: #334155;">ได้คะแนน <strong>${userScore} / 10</strong></p>
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px dashed #cbd5e1;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: bold; color: #1e293b;">กรุณากรอก ชื่อ-นามสกุล เพื่อรับใบประกาศนียบัตร:</label>
+                    <input type="text" id="cert-name" placeholder="นายวิศวกร ยอดเยี่ยม" style="padding: 12px; width: 100%; max-width: 350px; border: 1px solid #94a3b8; border-radius: 6px; font-size: 1.05rem; font-family: 'Sarabun', sans-serif;">
+                    <br>
+                    <button class="action-btn" style="margin-top: 20px; font-size: 1.1rem; padding: 12px 24px;" onclick="generateCertificate()">พิมพ์ใบประกาศนียบัตร</button>
+                </div>
+                <div id="cert-container" style="margin-top: 30px; display: none;">
+                    <canvas id="cert-canvas" width="800" height="566" style="max-width: 100%; border: 1px solid #cbd5e1; border-radius: 4px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);"></canvas>
+                    <br>
+                    <a id="cert-download" class="action-btn" style="display: inline-block; margin-top: 20px; text-decoration: none; background: #0ea5e9;">⬇️ ดาวน์โหลดใบประกาศ (PNG)</a>
+                </div>
+            </div>
+        `;
+    } else {
+        resDiv.innerHTML = `
+            <div style="background: #fef2f2; padding: 30px; border-radius: 12px; border: 2px solid #ef4444; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="color: #b91c1c; margin-top: 0; font-size: 1.8rem;">คุณยังไม่ผ่านเกณฑ์ 75%</h2>
+                <p style="font-size: 1.2rem; color: #334155;">ได้คะแนน <strong>${userScore} / 10</strong> (ต้องได้ 8 คะแนนขึ้นไป)</p>
+                <button class="action-btn secondary-btn" style="margin-top: 20px; font-size: 1.1rem; padding: 12px 24px;" onclick="renderQuizHTML(document.getElementById('quiz-container'))">ทดสอบใหม่ (สุ่มข้อสอบใหม่)</button>
+            </div>
+        `;
+    }
+    
+    setTimeout(() => {
+        resDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+}
+
+window.generateCertificate = function() {
+    const nameInput = document.getElementById('cert-name').value.trim();
+    if (!nameInput) {
+        alert("กรุณากรอกชื่อ-นามสกุลก่อนพิมพ์ใบประกาศฯ");
+        return;
+    }
+
+    const canvas = document.getElementById('cert-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    ctx.fillStyle = '#f8fafc';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    ctx.lineWidth = 15;
+    ctx.strokeStyle = '#00979C'; 
+    ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.strokeRect(32, 32, canvas.width - 64, canvas.height - 64);
+
+    ctx.fillStyle = '#00979C';
+    ctx.beginPath(); ctx.arc(40, 40, 10, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(canvas.width-40, 40, 10, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(40, canvas.height-40, 10, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(canvas.width-40, canvas.height-40, 10, 0, Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = '#1e293b';
+    ctx.font = 'bold 40px "Sarabun", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('ใบประกาศนียบัตร', canvas.width/2, 120);
+
+    ctx.font = '22px "Sarabun", sans-serif';
+    ctx.fillStyle = '#64748b';
+    ctx.fillText('ขอมอบประกาศนียบัตรฉบับนี้เพื่อแสดงว่า', canvas.width/2, 180);
+
+    ctx.font = 'bold 46px "Sarabun", sans-serif';
+    ctx.fillStyle = '#00979C';
+    ctx.fillText(nameInput, canvas.width/2, 250);
+
+    ctx.font = '22px "Sarabun", sans-serif';
+    ctx.fillStyle = '#1e293b';
+    ctx.fillText('ได้ผ่านการทดสอบความรู้ โมดูล 6: มาตรฐานรับส่งข้อมูล 2', canvas.width/2, 320);
+    ctx.fillText('หลักสูตรไมโครคอนโทรลเลอร์ (ระดับ ปวส.)', canvas.width/2, 360);
+
+    ctx.font = 'bold 28px "Sarabun", sans-serif';
+    ctx.fillStyle = '#ef4444'; 
+    ctx.fillText(`ด้วยคะแนน ${userScore}/10 (${userScore*10}%)`, canvas.width/2, 420);
+
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+    ctx.font = '18px "Sarabun", sans-serif';
+    ctx.fillStyle = '#64748b';
+    ctx.fillText(`วันที่ผ่านการทดสอบ: ${dateStr}`, canvas.width/2, 480);
+
+    ctx.beginPath();
+    ctx.moveTo(canvas.width/2 - 120, 520);
+    ctx.lineTo(canvas.width/2 + 120, 520);
+    ctx.strokeStyle = '#94a3b8';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    document.getElementById('cert-container').style.display = 'block';
+
+    const link = document.getElementById('cert-download');
+    link.download = `Certificate_${nameInput.replace(/\s+/g, '_')}.png`;
+    link.href = canvas.toDataURL('image/png');
+};
 
 function renderNavigation() {
     const navItems = document.querySelectorAll('#nav-menu li[data-section]');
@@ -692,85 +855,11 @@ function renderNavigation() {
             contentArea.innerHTML = contentData[section];
             
             if(section === 'quiz') {
-                currentQuestion = 0;
-                score = 0;
-                renderQuiz();
+                renderQuizHTML(document.getElementById('quiz-container'));
             }
         });
     });
 }
-
-function renderQuiz() {
-    const quizContainer = document.getElementById('quiz-container');
-    if (!quizContainer) return;
-
-    if (currentQuestion >= quizQuestions.length) {
-        let resultMsg = score === quizQuestions.length 
-            ? "สุดยอด! คุณมีความรู้เรื่อง Data Serial อย่างทะลุปรุโปร่ง 🎉" 
-            : "พยายามอีกนิดนะ กลับไปทบทวนทฤษฎีแล้วลองใหม่! 💪";
-        
-        quizContainer.innerHTML = `
-            <div id="quiz-result-card">
-                <h2>ผลการทดสอบ</h2>
-                <div class="score-display">${score} / ${quizQuestions.length}</div>
-                <div class="result-message">${resultMsg}</div>
-                ${score < quizQuestions.length ? `<button onclick="resetQuiz()">กลับไปทำแบบทดสอบใหม่</button>` : ''}
-            </div>
-        `;
-        return;
-    }
-
-    const qData = quizQuestions[currentQuestion];
-    let optionsHtml = '';
-    
-    qData.options.forEach((opt, index) => {
-        optionsHtml += `<button class="option-btn" onclick="checkAnswer(${index}, this)">${opt}</button>`;
-    });
-
-    quizContainer.innerHTML = `
-        <div class="quiz-header">
-            <h3>แบบทดสอบ Data Serial (UART/RS232/RS485)</h3>
-            <div class="quiz-progress">ข้อ ${currentQuestion + 1} จาก ${quizQuestions.length}</div>
-        </div>
-        <div class="question-box">${qData.q}</div>
-        <div class="options-grid" id="options-grid">
-            ${optionsHtml}
-        </div>
-        <div class="quiz-actions">
-            <button id="next-btn" style="display:none;" onclick="nextQuestion()">ข้อถัดไป ➔</button>
-        </div>
-    `;
-}
-
-window.checkAnswer = function(selectedIndex, btnElement) {
-    const qData = quizQuestions[currentQuestion];
-    const grid = document.getElementById('options-grid');
-    const buttons = grid.querySelectorAll('.option-btn');
-    const nextBtn = document.getElementById('next-btn');
-    
-    buttons.forEach(btn => btn.disabled = true);
-    
-    if (selectedIndex === qData.answer) {
-        score++;
-        btnElement.classList.add('correct-show');
-    } else {
-        btnElement.classList.add('incorrect-show');
-        buttons[qData.answer].classList.add('correct-show');
-    }
-    
-    nextBtn.style.display = 'block';
-};
-
-window.nextQuestion = function() {
-    currentQuestion++;
-    renderQuiz();
-};
-
-window.resetQuiz = function() {
-    currentQuestion = 0;
-    score = 0;
-    renderQuiz();
-};
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
