@@ -63,59 +63,81 @@ const uartFrameSvg = `
     <text x="50" y="260" fill="#facc15" font-family="Sarabun" font-size="13">3. Parity bit (ถ้ามี) → ตรวจสอบความผิดพลาด (Even/Odd)</text>
     <text x="50" y="280" fill="#38bdf8" font-family="Sarabun" font-size="13">4. Stop bit (HIGH) → บอกว่าจบการส่ง 1 ชุดข้อมูลแล้ว</text>
 
-    <!-- Scanner Animation -->
+    <!-- Scanner Animation (right-only) -->
     <rect x="90" y="40" width="8" height="130" fill="rgba(255,255,255,0.15)" rx="3">
-        <animate attributeName="x" values="90;620;90" dur="5s" repeatCount="indefinite" />
+        <animate attributeName="x" values="50;700" dur="5s" repeatCount="indefinite" />
     </rect>
 </svg>
 `;
 
-// RS232 Voltage Level Comparison SVG
+// RS232 Voltage Level Comparison SVG — Stacked vertically with synced time axis
 const rs232VoltageSvg = `
-<svg viewBox="0 0 800 260" width="100%" height="100%">
-    <text x="400" y="25" fill="#f8fafc" font-family="Sarabun" font-size="18" font-weight="bold" text-anchor="middle">เปรียบเทียบระดับแรงดัน TTL (UART) vs RS232</text>
+<svg viewBox="0 0 800 380" width="100%" height="100%">
+    <text x="400" y="25" fill="#f8fafc" font-family="Sarabun" font-size="18" font-weight="bold" text-anchor="middle">เปรียบเทียบระดับแรงดัน TTL (UART) vs RS232 (แกนเวลาเดียวกัน)</text>
 
-    <!-- TTL Section -->
-    <text x="30" y="60" fill="#f43f5e" font-family="Sarabun" font-size="16" font-weight="bold">TTL (UART)</text>
+    <!-- ===== TTL (UART) Section — TOP ===== -->
+    <text x="30" y="55" fill="#f43f5e" font-family="Sarabun" font-size="16" font-weight="bold">TTL (UART)</text>
     <text x="30" y="80" fill="#94a3b8" font-family="monospace" font-size="11">5V ──</text>
     <text x="30" y="140" fill="#94a3b8" font-family="monospace" font-size="11">0V ──</text>
-    
-    <!-- TTL Waveform: sending 01010110 -->
-    <path d="M 100 130 L 100 75 L 140 75 L 140 130 L 180 130 L 180 75 L 220 75 L 220 130 L 260 130 L 260 75 L 300 75 L 300 130 L 340 130 L 340 75 L 380 75" stroke="#f43f5e" stroke-width="3" fill="none"/>
+    <line x1="80" y1="75" x2="80" y2="140" stroke="#475569" stroke-width="1"/>
 
-    <!-- Labels above TTL -->
-    <text x="120" y="165" fill="#4ade80" font-family="monospace" font-size="10" text-anchor="middle">1</text>
-    <text x="160" y="165" fill="#ef4444" font-family="monospace" font-size="10" text-anchor="middle">0</text>
-    <text x="200" y="165" fill="#4ade80" font-family="monospace" font-size="10" text-anchor="middle">1</text>
-    <text x="240" y="165" fill="#ef4444" font-family="monospace" font-size="10" text-anchor="middle">0</text>
-    <text x="280" y="165" fill="#4ade80" font-family="monospace" font-size="10" text-anchor="middle">1</text>
-    <text x="320" y="165" fill="#ef4444" font-family="monospace" font-size="10" text-anchor="middle">0</text>
-    <text x="360" y="165" fill="#4ade80" font-family="monospace" font-size="10" text-anchor="middle">1</text>
+    <!-- TTL Waveform -->
+    <path d="M 80 130 L 80 75 L 160 75 L 160 130 L 240 130 L 240 75 L 320 75 L 320 130 L 400 130 L 400 75 L 480 75 L 480 130 L 560 130 L 560 75 L 640 75 L 640 130 L 720 130" stroke="#f43f5e" stroke-width="3" fill="none"/>
 
-    <!-- Arrow -->
-    <text x="410" y="110" fill="#fff" font-family="Sarabun" font-size="28">→</text>
-    <text x="410" y="135" fill="#94a3b8" font-family="Sarabun" font-size="12">MAX232</text>
+    <!-- TTL Logic Labels -->
+    <text x="120" y="160" fill="#4ade80" font-family="monospace" font-size="11" text-anchor="middle">1</text>
+    <text x="200" y="160" fill="#ef4444" font-family="monospace" font-size="11" text-anchor="middle">0</text>
+    <text x="280" y="160" fill="#4ade80" font-family="monospace" font-size="11" text-anchor="middle">1</text>
+    <text x="360" y="160" fill="#ef4444" font-family="monospace" font-size="11" text-anchor="middle">0</text>
+    <text x="440" y="160" fill="#4ade80" font-family="monospace" font-size="11" text-anchor="middle">1</text>
+    <text x="520" y="160" fill="#ef4444" font-family="monospace" font-size="11" text-anchor="middle">0</text>
+    <text x="600" y="160" fill="#4ade80" font-family="monospace" font-size="11" text-anchor="middle">1</text>
+    <text x="680" y="160" fill="#ef4444" font-family="monospace" font-size="11" text-anchor="middle">0</text>
 
-    <!-- RS232 Section -->
-    <text x="460" y="60" fill="#0ea5e9" font-family="Sarabun" font-size="16" font-weight="bold">RS232</text>
-    <text x="460" y="80" fill="#94a3b8" font-family="monospace" font-size="11">+12V ──</text>
-    <text x="460" y="120" fill="#94a3b8" font-family="monospace" font-size="11">0V ──</text>
-    <text x="460" y="160" fill="#94a3b8" font-family="monospace" font-size="11">-12V ──</text>
+    <!-- Separator + MAX232 label -->
+    <line x1="30" y1="178" x2="770" y2="178" stroke="#475569" stroke-width="1" stroke-dasharray="6 3"/>
+    <rect x="360" y="168" width="80" height="20" rx="4" fill="#0f172a"/>
+    <text x="400" y="182" fill="#94a3b8" font-family="Sarabun" font-size="12" text-anchor="middle">▼ MAX232 ▼</text>
 
-    <!-- RS232 Waveform: INVERTED -->
-    <path d="M 530 75 L 530 150 L 570 150 L 570 75 L 610 75 L 610 150 L 650 150 L 650 75 L 690 75 L 690 150 L 730 150 L 730 75 L 770 75" stroke="#0ea5e9" stroke-width="3" fill="none"/>
+    <!-- ===== RS232 Section — BOTTOM ===== -->
+    <text x="30" y="210" fill="#0ea5e9" font-family="Sarabun" font-size="16" font-weight="bold">RS232</text>
+    <text x="22" y="235" fill="#94a3b8" font-family="monospace" font-size="11">+12V ──</text>
+    <text x="30" y="270" fill="#94a3b8" font-family="monospace" font-size="11">0V ──</text>
+    <text x="25" y="305" fill="#94a3b8" font-family="monospace" font-size="11">-12V ──</text>
+    <line x1="80" y1="230" x2="80" y2="300" stroke="#475569" stroke-width="1"/>
 
-    <text x="550" y="180" fill="#ef4444" font-family="monospace" font-size="10" text-anchor="middle">0</text>
-    <text x="590" y="180" fill="#4ade80" font-family="monospace" font-size="10" text-anchor="middle">1</text>
-    <text x="630" y="180" fill="#ef4444" font-family="monospace" font-size="10" text-anchor="middle">0</text>
-    <text x="670" y="180" fill="#4ade80" font-family="monospace" font-size="10" text-anchor="middle">1</text>
-    <text x="710" y="180" fill="#ef4444" font-family="monospace" font-size="10" text-anchor="middle">0</text>
-    <text x="750" y="180" fill="#4ade80" font-family="monospace" font-size="10" text-anchor="middle">1</text>
+    <!-- RS232 Waveform — INVERTED: logic 1 = -12V (bottom), logic 0 = +12V (top) -->
+    <path d="M 80 300 L 80 235 L 160 235 L 160 300 L 240 300 L 240 235 L 320 235 L 320 300 L 400 300 L 400 235 L 480 235 L 480 300 L 560 300 L 560 235 L 640 235 L 640 300 L 720 300" stroke="#0ea5e9" stroke-width="3" fill="none"/>
+
+    <!-- RS232 Logic Labels -->
+    <text x="120" y="320" fill="#4ade80" font-family="monospace" font-size="11" text-anchor="middle">1</text>
+    <text x="200" y="320" fill="#ef4444" font-family="monospace" font-size="11" text-anchor="middle">0</text>
+    <text x="280" y="320" fill="#4ade80" font-family="monospace" font-size="11" text-anchor="middle">1</text>
+    <text x="360" y="320" fill="#ef4444" font-family="monospace" font-size="11" text-anchor="middle">0</text>
+    <text x="440" y="320" fill="#4ade80" font-family="monospace" font-size="11" text-anchor="middle">1</text>
+    <text x="520" y="320" fill="#ef4444" font-family="monospace" font-size="11" text-anchor="middle">0</text>
+    <text x="600" y="320" fill="#4ade80" font-family="monospace" font-size="11" text-anchor="middle">1</text>
+    <text x="680" y="320" fill="#ef4444" font-family="monospace" font-size="11" text-anchor="middle">0</text>
+
+    <!-- Vertical dashed grid lines (aligned time axis) -->
+    <line x1="160" y1="70" x2="160" y2="310" stroke="#334155" stroke-width="1" stroke-dasharray="3 3"/>
+    <line x1="240" y1="70" x2="240" y2="310" stroke="#334155" stroke-width="1" stroke-dasharray="3 3"/>
+    <line x1="320" y1="70" x2="320" y2="310" stroke="#334155" stroke-width="1" stroke-dasharray="3 3"/>
+    <line x1="400" y1="70" x2="400" y2="310" stroke="#334155" stroke-width="1" stroke-dasharray="3 3"/>
+    <line x1="480" y1="70" x2="480" y2="310" stroke="#334155" stroke-width="1" stroke-dasharray="3 3"/>
+    <line x1="560" y1="70" x2="560" y2="310" stroke="#334155" stroke-width="1" stroke-dasharray="3 3"/>
+    <line x1="640" y1="70" x2="640" y2="310" stroke="#334155" stroke-width="1" stroke-dasharray="3 3"/>
+    <line x1="720" y1="70" x2="720" y2="310" stroke="#334155" stroke-width="1" stroke-dasharray="3 3"/>
+
+    <!-- Synchronized scanning line across BOTH graphs (right-only) -->
+    <line x1="80" y1="65" x2="80" y2="310" stroke="rgba(255,255,255,0.4)" stroke-width="2">
+        <animate attributeName="x1" values="80;720" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="x2" values="80;720" dur="5s" repeatCount="indefinite"/>
+    </line>
 
     <!-- Explanation -->
-    <text x="30" y="210" fill="#f8fafc" font-family="Sarabun" font-size="14" font-weight="bold">สิ่งสำคัญ:</text>
-    <text x="30" y="230" fill="#f43f5e" font-family="Sarabun" font-size="13">• TTL: ลอจิก 1 = +5V, ลอจิก 0 = 0V (ห้ามต่อกับ RS232 โดยตรง!)</text>
-    <text x="30" y="250" fill="#0ea5e9" font-family="Sarabun" font-size="13">• RS232: ลอจิก 1 = -3V ถึง -12V, ลอจิก 0 = +3V ถึง +12V (กลับกัน!)</text>
+    <text x="30" y="345" fill="#f8fafc" font-family="Sarabun" font-size="14" font-weight="bold">สิ่งสำคัญ:</text>
+    <text x="30" y="363" fill="#f43f5e" font-family="Sarabun" font-size="13">• TTL: ลอจิก 1 = +5V (สูง), ลอจิก 0 = 0V (ต่ำ)          • RS232: ลอจิก 1 = -12V (ต่ำ), ลอจิก 0 = +12V (สูง) → กลับกัน!</text>
 </svg>
 `;
 
@@ -157,9 +179,9 @@ const rs485ProtocolSvg = `
     <text x="730" y="97" fill="#94a3b8" font-family="monospace" font-size="10" text-anchor="middle">Silence</text>
     <text x="730" y="110" fill="#94a3b8" font-family="monospace" font-size="9" text-anchor="middle">≥3.5 char</text>
 
-    <!-- Scanning animation over the frame -->
-    <rect x="100" y="72" width="12" height="56" fill="rgba(255,255,255,0.2)" rx="3">
-        <animate attributeName="x" values="100;700;100" dur="4s" repeatCount="indefinite" />
+    <!-- Scanning animation over the frame (right-only) -->
+    <rect x="30" y="72" width="12" height="56" fill="rgba(255,255,255,0.2)" rx="3">
+        <animate attributeName="x" values="30;760" dur="4s" repeatCount="indefinite" />
     </rect>
 
     <!-- Function Code Table -->
@@ -422,7 +444,7 @@ const contentData = {
 
             <h3 style="color: var(--rs232-color);">⚡ โครงสร้าง Data Frame เหมือน UART (แต่แรงดันกลับกัน!)</h3>
             <p>RS232 ใช้โครงสร้าง Data Frame <strong>เดียวกันกับ UART</strong> ทุกประการ (Start bit → Data bits → Parity → Stop bit) แต่ระดับแรงดันไฟฟ้าจะถูก <strong>"กลับ (Inverted)"</strong> ผ่าน IC MAX232</p>
-            <div class="intro-diagram">
+            <div class="intro-diagram" style="aspect-ratio: 2/1;">
                 ${rs232VoltageSvg}
             </div>
         </div>
