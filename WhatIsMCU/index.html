@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บทเรียน: ไมโครคอนโทรลเลอร์คืออะไร?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Microcontroller</h2>
+            <p>Introduction to MCU</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#intro" class="nav-link active">1. ไมโครคอนโทรลเลอร์คืออะไร?</a>
+            <a href="#history" class="nav-link">2. ประวัติและความสำคัญ</a>
+            <a href="#structure" class="nav-link">3. โครงสร้างพื้นฐาน (Interactive)</a>
+            <a href="#quiz" class="nav-link">4. แบบทดสอบท้ายบท</a>
+            <a href="../index.html" class="nav-link" style="margin-top: 1rem; color: #00979C; font-weight: bold;">← กลับหน้าหลัก</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <!-- Section 1: Introduction -->
+        <section id="intro" class="content-section card">
+            <h2>1. ไมโครคอนโทรลเลอร์ (Microcontroller) คืออะไร?</h2>
+            <p><strong>ไมโครคอนโทรลเลอร์ (MCU: Microcontroller Unit)</strong> คือ คอมพิวเตอร์ขนาดเล็กที่รวมเอาหน่วยประมวลผล (CPU), หน่วยความจำ (RAM, ROM), และพอร์ตเชื่อมต่อ (I/O Ports) เข้าไว้ด้วยกันในชิปไอซี (IC) เพียงตัวเดียว (Single-Chip Computer) ถูกออกแบบมาเพื่อควบคุมการทำงานเฉพาะอย่าง (Embedded Systems)</p>
+            
+            <div class="theory-grid" style="margin-top: 20px;">
+                <div class="theory-box" style="border-left-color: #f59e0b;">
+                    <h3 style="color: #f59e0b;">🖥️ ไมโครโปรเซสเซอร์ (MPU)</h3>
+                    <p>เหมือนสมองของคอมพิวเตอร์ทั่วไป (เช่น Intel Core i7, AMD Ryzen)</p>
+                    <ul style="font-size: 0.9rem; margin-left: 20px;">
+                        <li>มีเฉพาะ CPU ในชิป</li>
+                        <li>ต้องต่อ RAM, ROM, I/O เพิ่มภายนอก</li>
+                        <li>ประมวลผลงานซับซ้อนได้ดี กินไฟมาก</li>
+                        <li>ใช้ใน PC, โน้ตบุ๊ก, เซิร์ฟเวอร์</li>
+                    </ul>
+                </div>
+                <div class="theory-box" style="border-left-color: #10b981;">
+                    <h3 style="color: #10b981;">🧠 ไมโครคอนโทรลเลอร์ (MCU)</h3>
+                    <p>คอมพิวเตอร์ขนาดจิ๋วที่ครบจบในตัวเดียว</p>
+                    <ul style="font-size: 0.9rem; margin-left: 20px;">
+                        <li>มี CPU + RAM + ROM + I/O ในชิปเดียว</li>
+                        <li>พร้อมใช้งานทันทีเพียงจ่ายไฟเลี้ยง</li>
+                        <li>ประมวลผลงานเฉพาะด้าน กินไฟน้อย</li>
+                        <li>ใช้ใน สมาร์ทโฮม, รถยนต์, เครื่องซักผ้า</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <!-- SVG Comparison -->
+                <svg viewBox="0 0 600 250" style="max-width: 100%; height: auto;">
+                    <!-- MPU -->
+                    <rect x="50" y="20" width="200" height="200" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2" rx="10"/>
+                    <rect x="80" y="50" width="140" height="60" fill="#f59e0b" rx="5"/>
+                    <text x="150" y="85" fill="white" font-weight="bold" text-anchor="middle">CPU</text>
+                    <text x="150" y="140" fill="#64748b" font-size="12" text-anchor="middle">RAM, ROM, I/O</text>
+                    <text x="150" y="160" fill="#64748b" font-size="12" text-anchor="middle">อยู่ภายนอกชิป</text>
+                    <text x="150" y="240" fill="#475569" font-weight="bold" text-anchor="middle">Microprocessor</text>
+
+                    <!-- Arrow -->
+                    <path d="M 270 120 L 330 120" stroke="#94a3b8" stroke-width="3" marker-end="url(#arrow)"/>
+                    <text x="300" y="110" fill="#64748b" font-size="12" text-anchor="middle">vs</text>
+
+                    <defs>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+                        </marker>
+                    </defs>
+
+                    <!-- MCU -->
+                    <rect x="350" y="20" width="200" height="200" fill="#f0fdf4" stroke="#86efac" stroke-width="2" rx="10"/>
+                    <rect x="380" y="50" width="140" height="40" fill="#10b981" rx="5"/>
+                    <text x="450" y="75" fill="white" font-weight="bold" text-anchor="middle">CPU</text>
+                    
+                    <rect x="380" y="100" width="65" height="30" fill="#3b82f6" rx="3"/>
+                    <text x="412" y="120" fill="white" font-size="10" text-anchor="middle">RAM</text>
+                    
+                    <rect x="455" y="100" width="65" height="30" fill="#8b5cf6" rx="3"/>
+                    <text x="487" y="120" fill="white" font-size="10" text-anchor="middle">ROM</text>
+
+                    <rect x="380" y="140" width="140" height="30" fill="#ef4444" rx="3"/>
+                    <text x="450" y="160" fill="white" font-size="10" text-anchor="middle">I/O Ports & Peripherals</text>
+
+                    <text x="450" y="240" fill="#166534" font-weight="bold" text-anchor="middle">Microcontroller</text>
+                </svg>
+            </div>
+        </section>
+
+        <!-- Section 2: History and Importance -->
+        <section id="history" class="content-section card">
+            <h2>2. ประวัติและความสำคัญ</h2>
+            <p>จากชิปคอมพิวเตอร์ขนาดใหญ่ สู่ยุคของชิปขนาดเล็กที่มีบทบาทสำคัญในการขับเคลื่อนโลกแห่งเทคโนโลยี (IoT)</p>
+            
+            <div class="timeline-container" style="margin: 40px 0;">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3>1971: จุดเริ่มต้น (Intel 4004)</h3>
+                            <p>ไมโครโปรเซสเซอร์ตัวแรกของโลกถือกำเนิดขึ้น แต่ยังไม่ใช่ไมโครคอนโทรลเลอร์ที่สมบูรณ์</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3>1974: กำเนิด MCU (TMS 1000)</h3>
+                            <p>Texas Instruments เปิดตัวไมโครคอนโทรลเลอร์ตัวแรก รวม RAM, ROM, I/O ไว้ในชิปเดียว</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3>1996: ยุคของ AVR (Atmel)</h3>
+                            <p>สถาปัตยกรรม AVR ถือกำเนิดขึ้น (ตระกูล ATmega) ซึ่งมีความเร็วสูง ประหยัดพลังงาน ใช้งานง่าย</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot" style="background-color: #00979C;"></div>
+                        <div class="timeline-content" style="border-left-color: #00979C;">
+                            <h3 style="color: #00979C;">2005: Arduino เปลื่ยนโลก</h3>
+                            <p>การเปิดตัวบอร์ด Arduino ทำให้การเขียนโปรแกรม MCU ง่ายขึ้นมาก เข้าถึงนักเรียนและนักประดิษฐ์ทั่วโลก</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot" style="background-color: #e7352b;"></div>
+                        <div class="timeline-content" style="border-left-color: #e7352b;">
+                            <h3 style="color: #e7352b;">2016 - ปัจจุบัน: ยุค IoT (ESP32)</h3>
+                            <p>ไมโครคอนโทรลเลอร์ทรงพลังพร้อม WiFi และ Bluetooth สานต่อโลกของ Internet of Things (IoT)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="color: #00979C; margin-top: 30px;">ทำไมต้องเรียนไมโครคอนโทรลเลอร์?</h3>
+            <div class="theory-grid" style="margin-top: 15px;">
+                <div class="theory-box" style="border-left-color: #ef4444; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 10px;">🏭</div>
+                    <h4 style="color: #ef4444;">อุตสาหกรรม 4.0</h4>
+                    <p>ระบบอัตโนมัติ หุ่นยนต์ และสายพานการผลิต ล้วนควบคุมด้วยระบบสมองกลฝังตัว</p>
+                </div>
+                <div class="theory-box" style="border-left-color: #3b82f6; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 10px;">🌐</div>
+                    <h4 style="color: #3b82f6;">Internet of Things (IoT)</h4>
+                    <p>อุปกรณ์รอบตัวเชื่อมต่ออินเทอร์เน็ตได้ (Smart Home, Smart Farm) ล้วนมี MCU เป็นหัวใจหลัก</p>
+                </div>
+                <div class="theory-box" style="border-left-color: #10b981; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 10px;">🎓</div>
+                    <h4 style="color: #10b981;">โอกาสทางสายอาชีพ</h4>
+                    <p>วิศวกรระบบฝังตัวและนักพัฒนา IoT เป็นที่ต้องการสูงในตลาดแรงงานอนาคต</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Simulator / Interactive Block Diagram -->
+        <section id="structure" class="content-section card">
+            <h2>3. โครงสร้างพื้นฐานภายในไมโครคอนโทรลเลอร์</h2>
+            <p>เพื่อให้ไมโครคอนโทรลเลอร์ทำงานได้ด้วยตัวเอง ภายในชิปจึงประกอบไปด้วยส่วนสำคัญหลายส่วน <strong>คลิกหรือชี้ที่แต่ละบล็อกในแผนภาพด้านล่างเพื่อดูรายละเอียด และกดปุ่มแสดงเส้นทางข้อมูล</strong></p>
+            
+            <div class="interactive-layout" style="display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap;">
+                <!-- Block Diagram Canvas -->
+                <div class="diagram-canvas" style="flex: 2; min-width: 400px; background-color: #0f172a; border-radius: 8px; padding: 20px; position: relative;">
+                    <button id="toggle-flow-btn" class="btn btn-primary" style="position: absolute; top: 15px; right: 15px; font-size: 0.85rem; padding: 5px 10px;">▶️ เริ่มแสดงการประมวลผล</button>
+                    
+                    <svg viewBox="0 0 600 500" id="mcu-diagram-svg" style="width: 100%; height: auto;">
+                        <defs>
+                            <marker id="arrow-flow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#facc15"/>
+                            </marker>
+                            <!-- Glow effects -->
+                            <filter id="glow-block" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur stdDeviation="3" result="blur" />
+                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            </filter>
+                        </defs>
+
+                        <!-- MCU Boundary -->
+                        <rect x="50" y="50" width="500" height="400" fill="#1e293b" stroke="#334155" stroke-width="4" rx="15" stroke-dasharray="10 5"/>
+                        <text x="300" y="40" fill="#cbd5e1" font-weight="bold" text-anchor="middle" font-size="18">โครงสร้างภายในไมโครคอนโทรลเลอร์ (Internal Architecture)</text>
+                        
+                        <!-- Internal Bus -->
+                        <rect x="280" y="80" width="40" height="340" fill="#475569" rx="5"/>
+                        <text x="300" y="250" fill="#94a3b8" font-size="12" text-anchor="middle" writing-mode="vertical-rl" transform="rotate(180, 300, 250)">SYSTEM BUS (Data/Address)</text>
+
+                        <!-- Blocks (Left side) -->
+                        <g class="mcu-block interactive-block" data-target="cpu" transform="translate(80, 100)">
+                            <rect width="160" height="80" rx="8" fill="#f59e0b" stroke="#b45309" stroke-width="3" class="block-rect"/>
+                            <text x="80" y="45" fill="white" font-weight="bold" text-anchor="middle" font-size="20">CPU</text>
+                            <text x="80" y="65" fill="#fef3c7" font-size="12" text-anchor="middle">Central Processing Unit</text>
+                            <!-- Bus connection -->
+                            <line x1="160" y1="40" x2="200" y2="40" stroke="#94a3b8" stroke-width="4"/>
+                        </g>
+
+                        <g class="mcu-block interactive-block" data-target="ram" transform="translate(80, 210)">
+                            <rect width="160" height="60" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="3" class="block-rect"/>
+                            <text x="80" y="35" fill="white" font-weight="bold" text-anchor="middle" font-size="18">RAM</text>
+                            <!-- Bus connection -->
+                            <line x1="160" y1="30" x2="200" y2="30" stroke="#94a3b8" stroke-width="4"/>
+                        </g>
+
+                        <g class="mcu-block interactive-block" data-target="rom" transform="translate(80, 290)">
+                            <rect width="160" height="60" rx="8" fill="#8b5cf6" stroke="#5b21b6" stroke-width="3" class="block-rect"/>
+                            <text x="80" y="25" fill="white" font-weight="bold" text-anchor="middle" font-size="16">ROM / Flash</text>
+                            <text x="80" y="45" fill="#ede9fe" font-size="11" text-anchor="middle">(Program Memory)</text>
+                            <!-- Bus connection -->
+                            <line x1="160" y1="30" x2="200" y2="30" stroke="#94a3b8" stroke-width="4"/>
+                        </g>
+
+                        <g class="mcu-block interactive-block" data-target="timer" transform="translate(80, 370)">
+                            <rect width="160" height="50" rx="8" fill="#0ea5e9" stroke="#0369a1" stroke-width="3" class="block-rect"/>
+                            <text x="80" y="30" fill="white" font-weight="bold" text-anchor="middle" font-size="14">Timer / Counter</text>
+                            <!-- Bus connection -->
+                            <line x1="160" y1="25" x2="200" y2="25" stroke="#94a3b8" stroke-width="4"/>
+                        </g>
+
+                        <!-- Blocks (Right side) -->
+                        <g class="mcu-block interactive-block" data-target="io" transform="translate(360, 100)">
+                            <rect width="160" height="80" rx="8" fill="#10b981" stroke="#047857" stroke-width="3" class="block-rect"/>
+                            <text x="80" y="35" fill="white" font-weight="bold" text-anchor="middle" font-size="16">Digital I/O Ports</text>
+                            <text x="80" y="60" fill="#d1fae5" font-size="12" text-anchor="middle">(GPIO)</text>
+                            <!-- Bus connection -->
+                            <line x1="-40" y1="40" x2="0" y2="40" stroke="#94a3b8" stroke-width="4"/>
+                            <!-- External connection -->
+                            <line x1="160" y1="40" x2="200" y2="40" stroke="#10b981" stroke-width="3" stroke-dasharray="4 2"/>
+                        </g>
+
+                        <g class="mcu-block interactive-block" data-target="adc" transform="translate(360, 210)">
+                            <rect width="160" height="60" rx="8" fill="#ec4899" stroke="#be185d" stroke-width="3" class="block-rect"/>
+                            <text x="80" y="25" fill="white" font-weight="bold" text-anchor="middle" font-size="16">ADC</text>
+                            <text x="80" y="45" fill="#fce7f3" font-size="11" text-anchor="middle">(Analog to Digital)</text>
+                            <!-- Bus connection -->
+                            <line x1="-40" y1="30" x2="0" y2="30" stroke="#94a3b8" stroke-width="4"/>
+                            <!-- External connection -->
+                            <line x1="160" y1="30" x2="200" y2="30" stroke="#ec4899" stroke-width="3" stroke-dasharray="4 2"/>
+                        </g>
+
+                        <g class="mcu-block interactive-block" data-target="comm" transform="translate(360, 290)">
+                            <rect width="160" height="80" rx="8" fill="#f43f5e" stroke="#be123c" stroke-width="3" class="block-rect"/>
+                            <text x="80" y="35" fill="white" font-weight="bold" text-anchor="middle" font-size="14">Communication</text>
+                            <text x="80" y="55" fill="#ffe4e6" font-size="11" text-anchor="middle">(UART, SPI, I2C)</text>
+                            <!-- Bus connection -->
+                            <line x1="-40" y1="40" x2="0" y2="40" stroke="#94a3b8" stroke-width="4"/>
+                            <!-- External connection -->
+                            <line x1="160" y1="40" x2="200" y2="40" stroke="#f43f5e" stroke-width="3" stroke-dasharray="4 2"/>
+                        </g>
+
+                        <!-- Data Flow Animations (Hidden initially) -->
+                        <g id="data-flow-animations" style="display: none;">
+                            <!-- Input from I/O -->
+                            <path class="flow-line" d="M 520 140 L 360 140 L 300 140 L 300 140" fill="none" stroke="#facc15" stroke-width="4" stroke-dasharray="10 10" marker-end="url(#arrow-flow)"/>
+                            <!-- Bus to CPU -->
+                            <path class="flow-line flow-delay-1" d="M 300 140 L 240 140" fill="none" stroke="#facc15" stroke-width="4" stroke-dasharray="10 10" marker-end="url(#arrow-flow)"/>
+                            <!-- CPU to RAM -->
+                            <path class="flow-line flow-delay-2" d="M 240 140 L 300 140 L 300 240 L 240 240" fill="none" stroke="#facc15" stroke-width="4" stroke-dasharray="10 10" marker-end="url(#arrow-flow)"/>
+                            <!-- CPU to Output -->
+                            <path class="flow-line flow-delay-3" d="M 240 140 L 300 140 L 320 140 L 360 140" fill="none" stroke="#facc15" stroke-width="4" stroke-dasharray="10 10" marker-end="url(#arrow-flow)"/>
+                        </g>
+
+                        <!-- Click hint -->
+                        <text x="300" y="470" fill="#94a3b8" font-size="14" text-anchor="middle" font-style="italic">👈 คลิกหรือชี้ที่แต่ละบล็อกเพื่อดูรายละเอียด</text>
+                    </svg>
+                </div>
+
+                <!-- Information Panel -->
+                <div class="info-panel" id="info-panel" style="flex: 1; min-width: 250px; background: #fff; border-radius: 8px; padding: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <div style="text-align: center; color: #94a3b8; margin-top: 50px;">
+                        <span style="font-size: 3rem;">👆</span>
+                        <p>เลือกส่วนประกอบบนแผนภาพเพื่อดูข้อมูล</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Board Comparison -->
+            <div style="margin-top: 40px; border-top: 2px dashed #e2e8f0; padding-top: 20px;">
+                <h3 style="color: #00979C;">เปรียบเทียบบอร์ดพัฒนาไมโครคอนโทรลเลอร์ยอดนิยม</h3>
+                <div class="theory-grid" style="margin-top: 15px;">
+                    <div class="theory-box" style="border-left-color: #00979C;">
+                        <h4 style="color: #00979C; margin-bottom: 10px;">Arduino UNO (บอร์ดคลาสสิก)</h4>
+                        <ul style="font-size: 0.9rem;">
+                            <li><strong>MCU หลัก:</strong> ATmega328P (8-bit)</li>
+                            <li><strong>ความเร็ว:</strong> 16 MHz</li>
+                            <li><strong>หน่วยความจำ:</strong> 32 KB Flash, 2 KB RAM</li>
+                            <li><strong>แรงดันไฟ:</strong> 5V</li>
+                            <li><strong>จุดเด่น:</strong> ทนทาน ใช้งานง่าย เหมาะกับผู้เริ่มต้นเรียนรู้พื้นฐาน</li>
+                        </ul>
+                    </div>
+                    <div class="theory-box" style="border-left-color: #e7352b;">
+                        <h4 style="color: #e7352b; margin-bottom: 10px;">ESP32 DevKit (บอร์ด IoT)</h4>
+                        <ul style="font-size: 0.9rem;">
+                            <li><strong>MCU หลัก:</strong> ESP32 (32-bit Dual Core)</li>
+                            <li><strong>ความเร็ว:</strong> 160-240 MHz</li>
+                            <li><strong>หน่วยความจำ:</strong> 4 MB Flash, 520 KB RAM</li>
+                            <li><strong>แรงดันไฟ:</strong> 3.3V</li>
+                            <li><strong>จุดเด่น:</strong> ทรงพลัง มี Wi-Fi และ Bluetooth ในตัว เหมาะสำหรับงาน IoT</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Quiz -->
+        <section id="quiz" class="content-section card">
+            <h2><i class="fas fa-tasks"></i> แบบทดสอบท้ายบท</h2>
+            <p>ทดสอบความเข้าใจเกี่ยวกับความหมาย โครงสร้าง และประวัติของไมโครคอนโทรลเลอร์ (สุ่ม 10 ข้อ ต้องได้ 8/10 เพื่อผ่าน)</p>
+            <div id="quiz-container" class="quiz-container">
+                <!-- Advanced Quiz will be injected here -->
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
