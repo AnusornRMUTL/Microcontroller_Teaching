@@ -119,6 +119,8 @@
             margin-bottom: 1rem;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
             animation: slideInUp 0.8s ease-out;
+            word-break: keep-all;
+            white-space: nowrap;
         }
 
         @keyframes slideInUp {
@@ -640,6 +642,8 @@
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2.5rem;
+                white-space: normal;
+                word-break: break-word;
             }
 
             .hero-subtitle {
