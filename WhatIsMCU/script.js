@@ -83,38 +83,42 @@ function initBlockDiagram() {
     };
 
     blocks.forEach(block => {
-        block.addEventListener('click', () => {
+        block.addEventListener('click', (e) => {
+            // ใช้ currentTarget เสมอเพื่อให้ได้ <g> element ที่มี data-target
+            // (ไม่ใช่ child element เช่น <text> หรือ <line> ที่อาจถูกคลิกแทน)
+            const clickedBlock = e.currentTarget;
+            const target = clickedBlock.getAttribute('data-target');
+
+            // null-check: ถ้าไม่มี data-target ให้ข้ามไป
+            if (!target) return;
+
             // Remove active class from all
             blocks.forEach(b => b.classList.remove('active'));
             // Add active to clicked
-            block.classList.add('active');
+            clickedBlock.classList.add('active');
             
             // Update info panel
-            const target = block.getAttribute('data-target');
             const data = blockData[target];
             
             if (data) {
-                let html = `<h3>${data.title}</h3>`;
-                html += `<p style="font-weight: 500;">${data.desc}</p>`;
-                html += `<ul style="margin-top: 10px; color: #475569;">`;
+                let html = `<div style="animation: fadeIn 0.3s ease;">`;
+                html += `<h3>${data.title}</h3>`;
+                html += `<p style="font-weight: 500; color: #475569; margin-bottom: 12px;">${data.desc}</p>`;
+                html += `<ul style="margin-top: 10px; color: #334155; line-height: 1.8;">`;
                 data.details.forEach(item => {
-                    html += `<li>${item}</li>`;
+                    html += `<li style="margin-bottom: 6px;">✅ ${item}</li>`;
                 });
                 html += `</ul>`;
+                html += `</div>`;
                 infoPanel.innerHTML = html;
-            }
-        });
-
-        // Hover effect optional
-        block.addEventListener('mouseenter', () => {
-            if(!block.classList.contains('active')) {
-                // minor highlight if needed
             }
         });
     });
 
     // Toggle Data Flow Animation
-    flowBtn.addEventListener('click', () => {
+    flowBtn.addEventListener('click', (e) => {
+        // หยุด event ไม่ให้ bubble ขึ้นไปยัง SVG parent (ป้องกัน unintended click)
+        e.stopPropagation();
         isFlowing = !isFlowing;
         if (isFlowing) {
             dataFlow.style.display = 'block';

@@ -192,17 +192,33 @@ p {
 /* Interactive Diagram */
 .interactive-block {
     cursor: pointer;
-    transition: transform 0.2s, filter 0.2s;
+    transition: filter 0.2s;
+    /* ต้องระบุ transform-box สำหรับ SVG context เพื่อป้องกัน conflict กับ SVG attribute transform */
+    transform-box: fill-box;
+    transform-origin: center;
 }
 
 .interactive-block:hover {
-    transform: translateY(-2px);
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    /* ใช้ filter แทน transform เพื่อป้องกัน conflict กับ transform="translate(x,y)" ใน SVG attribute */
+    filter: drop-shadow(0 0 10px rgba(250, 204, 21, 0.6)) brightness(1.15);
 }
 
 .interactive-block.active .block-rect {
     stroke: #facc15;
+    stroke-width: 5;
     filter: url(#glow-block);
+}
+
+/* ทำให้ <text> และ <line> ภายใน block โปร่งใสต่อ mouse events
+   เพื่อให้ click ผ่านลงไปยัง <rect> และ <g> parent โดยตรง */
+.interactive-block text,
+.interactive-block line {
+    pointer-events: none;
+}
+
+/* ทำให้ <rect> ภายใน block รับ click ได้เสมอ */
+.interactive-block rect {
+    pointer-events: fill;
 }
 
 .info-panel {
@@ -248,6 +264,11 @@ p {
 .flow-delay-1 { animation-delay: 0.5s; }
 .flow-delay-2 { animation-delay: 1.0s; }
 .flow-delay-3 { animation-delay: 1.5s; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
 
 
 /* Quiz Styles */
