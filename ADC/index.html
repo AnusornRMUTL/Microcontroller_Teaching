@@ -372,42 +372,81 @@
         /* Quiz Styles */
         .quiz-question {
             margin-bottom: 1.5rem;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            transition: all 0.2s ease;
         }
 
-        .quiz-options label {
-            display: block;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            background: var(--bg-app);
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
+        .quiz-question:hover {
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
         }
 
-        .quiz-options label:hover {
-            background: #e2e8f0;
-        }
-
-        .quiz-options input {
-            margin-right: 0.5rem;
-        }
-
-        .quiz-options label.correct {
-            background-color: #dcfce7;
-            border-color: var(--quiz-correct);
-        }
-
-        .quiz-options label.incorrect {
-            background-color: #fee2e2;
-            border-color: var(--quiz-incorrect);
-        }
-
-        .quiz-result {
-            font-size: 1.5rem;
-            font-weight: bold;
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
             margin-top: 1rem;
-            text-align: center;
+        }
+
+        .quiz-option {
+            padding: 14px 18px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: #334155;
+            line-height: 1.5;
+        }
+
+        .quiz-option:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateX(4px);
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            background: #00979C;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(0, 151, 156, 0.25);
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            background: #007d82;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 151, 156, 0.35);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .action-btn.secondary-btn {
+            background: #64748b;
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.2);
+        }
+
+        .action-btn.secondary-btn:hover {
+            background: #475569;
+            box-shadow: 0 6px 16px rgba(71, 85, 105, 0.3);
         }
 
         @media (max-width: 992px) {
@@ -853,7 +892,16 @@
 
             <!-- Section 4: Quiz -->
             <section id="quiz">
-                <h1>แบบทดสอบท้ายบท</h1>
+                <div class="intro-hero" style="margin-bottom: 2rem;">
+                    <svg width="80" height="80" viewBox="0 0 100 100" style="flex-shrink:0">
+                        <circle cx="50" cy="50" r="45" fill="#e0f7f7" stroke="#00979C" stroke-width="3"/>
+                        <path d="M30,50 L45,65 L70,35" fill="none" stroke="#00979C" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="intro-hero-text">
+                        <h1>แบบทดสอบท้ายบท: การแปลงสัญญาณแอนะล็อกเป็นดิจิทัล (ADC)</h1>
+                        <p>แบบทดสอบวัดความเข้าใจ 10 ข้อ เกณฑ์ผ่าน 8/10 คะแนนเพื่อรับใบประกาศนียบัตร</p>
+                    </div>
+                </div>
                 <div class="card" id="quiz-container">
                     <!-- Advanced Quiz will be injected here -->
                 </div>
