@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การควบคุมมอเตอร์ (DC, Stepper & Servo Motors) - Microcontroller Learning</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Microcontroller</h2>
+                <p>Motor Control (โมดูล 8)</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#intro" class="nav-link active">1. ทฤษฎีมอเตอร์ทั้ง 3 ชนิด</a>
+                <a href="#datasheets" class="nav-link">📥 ดาวน์โหลด Datasheets</a>
+                <a href="#dcmotor" class="nav-link">2. DC Motor & L298N</a>
+                <a href="#stepper" class="nav-link">3. Stepper & ULN2003</a>
+                <a href="#servo" class="nav-link">4. Servo Motor (PWM)</a>
+                <a href="#quiz" class="nav-link">5. แบบทดสอบท้ายบท</a>
+                <a href="../index.html" class="nav-link" style="margin-top: 1.5rem; color: #00979C; font-weight: bold; border-top: 1px solid #334155; padding-top: 1rem;">← กลับหน้าหลัก</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Banner -->
+            <div class="page-hero">
+                <div class="page-hero-icon">
+                    <svg width="90" height="90" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="45" fill="#e0f7f7" stroke="#00979C" stroke-width="3"/>
+                        <!-- Motor Body -->
+                        <rect x="25" y="32" width="50" height="36" rx="6" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+                        <!-- Shaft -->
+                        <rect x="46" y="16" width="8" height="16" fill="#94a3b8"/>
+                        <!-- Propeller / Gears -->
+                        <circle cx="50" cy="16" r="6" fill="#f59e0b"/>
+                        <path d="M 50 16 L 30 6 M 50 16 L 70 6" stroke="#f59e0b" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Coils Indicator -->
+                        <line x1="33" y1="50" x2="67" y2="50" stroke="#00979C" stroke-width="4" stroke-dasharray="4,3"/>
+                        <circle cx="50" cy="78" r="4" fill="#ef4444"/>
+                    </svg>
+                </div>
+                <div class="page-hero-text">
+                    <h1>การควบคุมมอเตอร์ (Motor Control)</h1>
+                    <p>ศึกษาทฤษฎีการขับโหลดกำลังสูง, วงจร H-Bridge, ไอซีขับ L298N, ULN2003 และการสร้างพัลส์ควบคุมเซอร์โวมอเตอร์</p>
+                </div>
+            </div>
+
+            <!-- ============================================================
+                 SECTION 1: ทฤษฎีเปรียบเทียบมอเตอร์ทั้ง 3 ชนิด
+                 ============================================================ -->
+            <section id="intro" class="section-card">
+                <h2 class="section-title">1. ทฤษฎีและความแตกต่างของมอเตอร์ทั้ง 3 ชนิด</h2>
+                <p>ในงานไมโครคอนโทรลเลอร์และระบบอัตโนมัติ มอเตอร์ไฟฟ้าเป็นอุปกรณ์แปลงพลังงานไฟฟ้าให้กลายเป็นพลังงานกลที่สำคัญที่สุด แต่เนื่องจากมอเตอร์แต่ละประเภทมีจุดเด่นและหลักการควบคุมที่แตกต่างกัน วิศวกรจึงต้องเลือกใช้งานให้เหมาะสมกับลักษณะงาน:</p>
+
+                <div class="compare-grid">
+                    <!-- DC Motor Card -->
+                    <div class="compare-card dc">
+                        <h3>🔴 มอเตอร์ไฟฟ้ากระแสตรง (DC Motor)</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;"><strong>เน้น:</strong> ความเร็วรอบสูง ต่อเนื่อง ราคาประหยัด</p>
+                        <ul>
+                            <li><strong>หลักการ:</strong> ใช้แรงดูด-ผลักของแม่เหล็กไฟฟ้าในทุ่นอาร์เมเจอร์</li>
+                            <li><strong>การควบคุม:</strong> สลับขั้วไฟฟ้าเพื่อเปลี่ยนทิศทาง (H-Bridge) และปรับแรงดัน/PWM เพื่อควบคุมความเร็ว</li>
+                            <li><strong>จุดเด่น:</strong> ความเร็วสูง (หลักพันถึงหมื่น RPM), โครงสร้างไม่ซับซ้อน</li>
+                            <li><strong>จุดด้อย:</strong> ควบคุมมุมองศาที่แน่นอนไม่ได้หากไม่มีเอ็นโค้ดเดอร์</li>
+                            <li><strong>งานที่ใช้:</strong> ล้อรถของเล่น, พัดลมระบายความร้อน, สว่านไฟฟ้า</li>
+                        </ul>
+                    </div>
+
+                    <!-- Stepper Motor Card -->
+                    <div class="compare-card stepper">
+                        <h3>🟠 สเต็ปเปอร์มอเตอร์ (Stepper Motor)</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;"><strong>เน้น:</strong> ความแม่นยำของมุม/ก้าว ล็อคตำแหน่งนิ่ง</p>
+                        <ul>
+                            <li><strong>หลักการ:</strong> จ่ายไฟกระตุ้นขดลวดแม่เหล็กทีละเฟสเพื่อดึงโรเตอร์ทีละก้าว (Step)</li>
+                            <li><strong>การควบคุม:</strong> ส่งพัลส์ตามลำดับ Sequence (Wave, Full, Half Step) ผ่านไอซี ULN2003 หรือไดรเวอร์เฉพาะ</li>
+                            <li><strong>จุดเด่น:</strong> เคลื่อนที่ตามจำนวนสเต็ปที่สั่งได้เป๊ะ (Open-loop) และมี Holding Torque ล็อคแกน</li>
+                            <li><strong>จุดด้อย:</strong> ความเร็วรอบต่ำ, กินไฟตลอดเวลาแม้หยุดนิ่ง</li>
+                            <li><strong>งานที่ใช้:</strong> เครื่องพิมพ์ 3 มิติ (3D Printer), เครื่อง CNC, สแกนเนอร์</li>
+                        </ul>
+                    </div>
+
+                    <!-- Servo Motor Card -->
+                    <div class="compare-card servo">
+                        <h3>🔵 เซอร์โวมอเตอร์ (RC Servo Motor)</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;"><strong>เน้น:</strong> ควบคุมมุมองศา 0-180° แรงบิดสูง</p>
+                        <ul>
+                            <li><strong>หลักการ:</strong> มอเตอร์ DC + เกียร์ทด + วงจรควบคุมและเซนเซอร์โพเทนชิโอมิเตอร์ป้อนกลับ (Closed-loop)</li>
+                            <li><strong>การควบคุม:</strong> ส่งสัญญาณพัลส์ PWM 50Hz (ความกว้าง 1.0ms - 2.0ms ระบุมุม 0°-180°)</li>
+                            <li><strong>จุดเด่น:</strong> สั่งมุมได้ทันที แรงบิดสูงเทียบกับขนาด กินกระแสตามภาระโหลด</li>
+                            <li><strong>จุดด้อย:</strong> มุมหมุนจำกัด (ส่วนใหญ่ 180°), ไม่สามารถหมุนต่อเนื่องแบบ 360° ได้ตามปกติ</li>
+                            <li><strong>งานที่ใช้:</strong> แขนกลอุตสาหกรรม, ไม้กั้นทาง, ปีกบังคับโดรน/เครื่องบิน</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>พารามิเตอร์</th>
+                                <th>DC Motor</th>
+                                <th>Stepper Motor (28BYJ-48)</th>
+                                <th>Servo Motor (SG90)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>รูปแบบการควบคุม</strong></td>
+                                <td>ความเร็วรอบ (Speed) & ทิศทาง (CW/CCW)</td>
+                                <td>ตำแหน่งมุมเป็นสเต็ป (Step Positioning)</td>
+                                <td>มุมองศาแน่นอน (0° - 180°)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>สัญญาณควบคุม</strong></td>
+                                <td>PWM (analogWrite) + ดิจิทัล 2 ขา</td>
+                                <td>พัลส์ดิจิทัล 4 เส้นสลับลำดับเฟส</td>
+                                <td>พัลส์ PWM 50Hz (1-2 ms) สายเดียว</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ไอซี / ไดรเวอร์ที่นิยม</strong></td>
+                                <td>L298N, L293D, MOSFET Driver</td>
+                                <td>ULN2003, A4988, DRV8825</td>
+                                <td>มีวงจรไดรเวอร์ในตัว (ต่อตรงขา MCU)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ระบบควบคุม</strong></td>
+                                <td>Open-loop (ไม่มีเซนเซอร์ภายใน)</td>
+                                <td>Open-loop (แม่นยำตามสเต็ปสัญญาณ)</td>
+                                <td>Closed-loop (มี Potentiometer ป้อนกลับ)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>แรงบิดตอนหยุดนิ่ง</strong></td>
+                                <td>ไม่มี (แกนฟรี หรือเบรกด้วยการช็อตขั้ว)</td>
+                                <td>สูงมาก (Holding Torque ล็อคแกน)</td>
+                                <td>สูง (ต้านทานการขืนมุมอัตโนมัติ)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Technical Datasheets Download Center -->
+                <div id="datasheets" class="datasheets-box">
+                    <div class="datasheets-box-header">
+                        <span style="font-size: 1.6rem;">📥</span>
+                        <div>
+                            <h3 style="margin: 0; color: #1e293b;">เอกสารและคู่มือทางเทคนิค (Datasheets & Technical Documents)</h3>
+                            <p style="font-size: 0.88rem; color: #64748b; margin-top: 2px;">ดาวน์โหลดเอกสารคู่มือคุณลักษณะอุปกรณ์ฉบับทางการ สำหรับศึกษาโครงสร้าง วงจร และข้อมูลจำเพาะทางไฟฟ้า</p>
+                        </div>
+                    </div>
+
+                    <div class="datasheets-grid">
+                        <!-- L298N Datasheet Card -->
+                        <div class="datasheet-card dc">
+                            <div>
+                                <div class="datasheet-card-top">
+                                    <div class="datasheet-icon">📑</div>
+                                    <div>
+                                        <div class="datasheet-title">L298 Dual Full-Bridge Driver</div>
+                                        <span class="datasheet-tag">STMicroelectronics / SparkFun</span>
+                                    </div>
+                                </div>
+                                <p class="datasheet-desc">คู่มือข้อมูลทางเทคนิคของไอซีไดรเวอร์ H-Bridge L298 สำหรับขับ DC Motor แรงดันสูงสุด 46V กระแส 4A พร้อมวงจรป้องกันอุณหภูมิ</p>
+                            </div>
+                            <div class="datasheet-meta">
+                                <span>📄 PDF (~612 KB)</span>
+                                <a href="datasheets/L298_Dual_H_Bridge_Datasheet.pdf" download class="datasheet-btn">
+                                    <span>⬇️</span> ดาวน์โหลด
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- 28BYJ-48 Stepper Datasheet Card -->
+                        <div class="datasheet-card stepper">
+                            <div>
+                                <div class="datasheet-card-top">
+                                    <div class="datasheet-icon">📑</div>
+                                    <div>
+                                        <div class="datasheet-title">28BYJ-48 Stepper Motor</div>
+                                        <span class="datasheet-tag">5V 4-Phase Geared Stepper</span>
+                                    </div>
+                                </div>
+                                <p class="datasheet-desc">สเปกและมิติของสเต็ปเปอร์มอเตอร์ 5V อัตราทดเฟือง 1:64 มุมสเต็ป 5.625°/64 ค่าความต้านทานขดลวด และ Wiring Diagram</p>
+                            </div>
+                            <div class="datasheet-meta">
+                                <span>📄 PDF (~202 KB)</span>
+                                <a href="datasheets/28BYJ_48_Stepper_Motor_Datasheet.pdf" download class="datasheet-btn">
+                                    <span>⬇️</span> ดาวน์โหลด
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- ULN2003A Datasheet Card -->
+                        <div class="datasheet-card stepper">
+                            <div>
+                                <div class="datasheet-card-top">
+                                    <div class="datasheet-icon">📑</div>
+                                    <div>
+                                        <div class="datasheet-title">ULN2003A Darlington Array</div>
+                                        <span class="datasheet-tag">Texas Instruments (TI)</span>
+                                    </div>
+                                </div>
+                                <p class="datasheet-desc">คู่มือไอซี Darlington Transistor Array 7 ช่อง ทนแรงดัน 50V กระแส 500mA พร้อมไดโอด Suppression ป้องกัน Back-EMF ในตัว</p>
+                            </div>
+                            <div class="datasheet-meta">
+                                <span>📄 PDF (~1.85 MB)</span>
+                                <a href="datasheets/ULN2003A_Darlington_Array_Datasheet.pdf" download class="datasheet-btn">
+                                    <span>⬇️</span> ดาวน์โหลด
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- SG90 Micro Servo Card -->
+                        <div class="datasheet-card servo">
+                            <div>
+                                <div class="datasheet-card-top">
+                                    <div class="datasheet-icon">📑</div>
+                                    <div>
+                                        <div class="datasheet-title">SG90 9g Micro Servo Motor</div>
+                                        <span class="datasheet-tag">TowerPro Official Specs</span>
+                                    </div>
+                                </div>
+                                <p class="datasheet-desc">ข้อมูลทางเทคนิคของมินิเซอร์โว SG90 แรงบิด 1.8 kg·cm (ที่ 4.8V) ความเร็วกวาด 0.1s/60° สัญญาณควบคุม PWM คาบเวลา 20ms</p>
+                            </div>
+                            <div class="datasheet-meta">
+                                <span>📄 PDF (~406 KB)</span>
+                                <a href="datasheets/SG90_Micro_Servo_Datasheet.pdf" download class="datasheet-btn">
+                                    <span>⬇️</span> ดาวน์โหลด
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- MG995 High Torque Servo Card -->
+                        <div class="datasheet-card servo">
+                            <div>
+                                <div class="datasheet-card-top">
+                                    <div class="datasheet-icon">📑</div>
+                                    <div>
+                                        <div class="datasheet-title">MG995 High-Torque Metal Servo</div>
+                                        <span class="datasheet-tag">TowerPro Metal Gear</span>
+                                    </div>
+                                </div>
+                                <p class="datasheet-desc">เซอร์โวเฟืองโลหะมาตรฐาน แรงบิดสูงถึง 10-12 kg·cm สำหรับแขนกล รถ RC และหุ่นยนต์อุตสาหกรรมขนาดเล็ก</p>
+                            </div>
+                            <div class="datasheet-meta">
+                                <span>📄 PDF (~101 KB)</span>
+                                <a href="datasheets/MG995_High_Torque_Servo_Datasheet.pdf" download class="datasheet-btn">
+                                    <span>⬇️</span> ดาวน์โหลด
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 SECTION 2: DC Motor & L298N
+                 ============================================================ -->
+            <section id="dcmotor" class="section-card">
+                <h2 class="section-title">2. มอเตอร์กระแสตรง และโมดูลขับมอเตอร์ L298N (H-Bridge)</h2>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                    <a href="datasheets/L298_Dual_H_Bridge_Datasheet.pdf" download class="inline-datasheet-badge">📑 ดาวน์โหลด L298N Datasheet (PDF)</a>
+                </div>
+                <p>มอเตอร์กระแสตรง (DC Motor) เปลี่ยนทิศทางการหมุนตามทิศทางการไหลของกระแสไฟฟ้า เพื่อหลีกเลี่ยงการสลับสายไฟด้วยมือ เราจึงใช้วงจร <strong>H-Bridge</strong> ซึ่งใช้สวิตช์อิเล็กทรอนิกส์ (ทรานซิสเตอร์) 4 ตัว ทำหน้าที่สลับทิศทางกระแสไฟฟ้า</p>
+
+                <!-- Theory Box: L298N Truth Table -->
+                <div style="background: #f8fafc; padding: 1.25rem; border-radius: 8px; border-left: 4px solid #ef4444; margin: 1rem 0;">
+                    <h4 style="color: #b91c1c; margin-bottom: 8px;">ตารางการทำงานของ L298N (ช่องขับ A)</h4>
+                    <div style="overflow-x:auto;">
+                        <table style="width:100%; border-collapse: collapse; font-size: 0.9rem; text-align: center;">
+                            <tr style="background: #e2e8f0; font-weight: bold;">
+                                <td style="padding: 6px;">ขา ENA (PWM)</td>
+                                <td style="padding: 6px;">ขา IN1</td>
+                                <td style="padding: 6px;">ขา IN2</td>
+                                <td style="padding: 6px;">ทิศทางการหมุนของมอเตอร์</td>
+                                <td style="padding: 6px;">สถานะเอาต์พุต (OUT1, OUT2)</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td>HIGH / PWM</td>
+                                <td><strong>HIGH (1)</strong></td>
+                                <td><strong>LOW (0)</strong></td>
+                                <td>หมุนตามเข็มนาฬิกา (CW / เดินหน้า)</td>
+                                <td>OUT1 = Vms, OUT2 = GND</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0; background: #fff;">
+                                <td>HIGH / PWM</td>
+                                <td><strong>LOW (0)</strong></td>
+                                <td><strong>HIGH (1)</strong></td>
+                                <td>หมุนทวนเข็มนาฬิกา (CCW / ถอยหลัง)</td>
+                                <td>OUT1 = GND, OUT2 = Vms</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td>HIGH</td>
+                                <td><strong>HIGH (1)</strong></td>
+                                <td><strong>HIGH (1)</strong></td>
+                                <td>หยุดทันทีแบบเบรก (Dynamic Braking)</td>
+                                <td>OUT1 = Vms, OUT2 = Vms (ช็อตขั้ว)</td>
+                            </tr>
+                            <tr>
+                                <td>LOW (0)</td>
+                                <td>X (ค่าใดก็ได้)</td>
+                                <td>X (ค่าใดก็ได้)</td>
+                                <td>ปล่อยฟรีหยุดหมุน (Coast / Standby)</td>
+                                <td>วงจรตัดไฟ ไม่จ่ายกระแส</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ESP32 to L298N Wiring Reference Table -->
+                <div style="background: #f8fafc; padding: 1.25rem; border-radius: 8px; border-left: 4px solid #00979C; margin: 1.25rem 0;">
+                    <h4 style="color: #007a7e; margin-bottom: 8px;">🔌 ตารางการเชื่อมต่อวงจรระหว่าง ESP32 DevKit V1 และ โมดูล L298N</h4>
+                    <div style="overflow-x:auto;">
+                        <table style="width:100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                            <tr style="background: #e2e8f0; font-weight: bold;">
+                                <th style="padding: 8px 12px;">ขา ESP32 DevKit</th>
+                                <th style="padding: 8px 12px;">ขาโมดูล L298N</th>
+                                <th style="padding: 8px 12px;">หน้าที่และประเภทสัญญาณ</th>
+                                <th style="padding: 8px 12px;">สีสายไฟในภาพ</th>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 8px 12px;"><strong>GPIO 14 (D14)</strong></td>
+                                <td style="padding: 8px 12px;"><strong>ENA</strong> (ถอด Jumper ออก)</td>
+                                <td style="padding: 8px 12px;">สัญญาณ PWM ความถี่ 5kHz ปรับความเร็วรอบ (0–255)</td>
+                                <td style="padding: 8px 12px;"><span style="color:#0284c7; font-weight:bold;">🔵 สีฟ้า (Blue)</span></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0; background: #fff;">
+                                <td style="padding: 8px 12px;"><strong>GPIO 27 (D27)</strong></td>
+                                <td style="padding: 8px 12px;"><strong>IN1</strong></td>
+                                <td style="padding: 8px 12px;">สัญญาณลอจิกดิจิทัลควบคุมทิศทาง (Logic Direction 1)</td>
+                                <td style="padding: 8px 12px;"><span style="color:#ca8a04; font-weight:bold;">🟡 สีเหลือง (Yellow)</span></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 8px 12px;"><strong>GPIO 26 (D26)</strong></td>
+                                <td style="padding: 8px 12px;"><strong>IN2</strong></td>
+                                <td style="padding: 8px 12px;">สัญญาณลอจิกดิจิทัลควบคุมทิศทาง (Logic Direction 2)</td>
+                                <td style="padding: 8px 12px;"><span style="color:#16a34a; font-weight:bold;">🟢 สีเขียว (Green)</span></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0; background: #fff;">
+                                <td style="padding: 8px 12px;"><strong>GND</strong></td>
+                                <td style="padding: 8px 12px;"><strong>GND</strong></td>
+                                <td style="padding: 8px 12px;"><strong>กราวด์ร่วม (Common GND)</strong> จำเป็นต้องต่อถึงกันเพื่อให้ระดับสัญญาณอ้างอิงตรงกัน</td>
+                                <td style="padding: 8px 12px;"><span style="color:#334155; font-weight:bold;">⚫ สีดำ (Black)</span></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 8px 12px;"><em>แหล่งจ่ายไฟภายนอก (+)</em></td>
+                                <td style="padding: 8px 12px;"><strong>+12V (VMS)</strong></td>
+                                <td style="padding: 8px 12px;">ไฟเลี้ยงมอเตอร์กระแสตรง (แบตเตอรี่ หรือ Adapter 7V - 12V DC)</td>
+                                <td style="padding: 8px 12px;"><span style="color:#dc2626; font-weight:bold;">🔴 สีแดง (Red)</span></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px 12px;"><em>ขั้วมอเตอร์ DC (M1)</em></td>
+                                <td style="padding: 8px 12px;"><strong>OUT1, OUT2</strong></td>
+                                <td style="padding: 8px 12px;">ขั้วต่อกระแสไฟฟ้าขับโหลดมอเตอร์ DC สลับขั้วตามลอจิก H-Bridge</td>
+                                <td style="padding: 8px 12px;"><span style="color:#dc2626; font-weight:bold;">🔴 แดง</span> / <span style="color:#0284c7; font-weight:bold;">🔵 น้ำเงิน</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Simulator Layout -->
+                <div class="simulator-layout">
+                    <!-- Simulator Canvas -->
+                    <div class="simulator-canvas">
+                        <svg id="dc-sim-svg" width="100%" height="290" viewBox="0 0 600 320">
+                            <defs>
+                                <filter id="glow-dc" x="-30%" y="-30%" width="160%" height="160%">
+                                    <feGaussianBlur stdDeviation="3" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                                <linearGradient id="heatsink-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#334155"/>
+                                    <stop offset="35%" stop-color="#0f172a"/>
+                                    <stop offset="70%" stop-color="#1e293b"/>
+                                    <stop offset="100%" stop-color="#020617"/>
+                                </linearGradient>
+                                <linearGradient id="motor-cyl" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#64748b"/>
+                                    <stop offset="50%" stop-color="#cbd5e1"/>
+                                    <stop offset="100%" stop-color="#475569"/>
+                                </linearGradient>
+                            </defs>
+
+                            <!-- 1. ESP32 DevKit V1 (Left Side: x=25, y=28) -->
+                            <g id="esp32-board">
+                                <!-- Main Black PCB Body -->
+                                <rect x="25" y="28" width="100" height="234" rx="8" fill="#18181b" stroke="#3f3f46" stroke-width="2"/>
+                                <rect x="28" y="31" width="94" height="228" rx="6" fill="none" stroke="#52525b" stroke-width="0.8" stroke-dasharray="2,2"/>
+                                
+                                <!-- Mounting Holes -->
+                                <circle cx="34" cy="37" r="3.5" fill="#09090b" stroke="#a1a1aa" stroke-width="1"/>
+                                <circle cx="116" cy="37" r="3.5" fill="#09090b" stroke="#a1a1aa" stroke-width="1"/>
+                                <circle cx="34" cy="253" r="3.5" fill="#09090b" stroke="#a1a1aa" stroke-width="1"/>
+                                <circle cx="116" cy="253" r="3.5" fill="#09090b" stroke="#a1a1aa" stroke-width="1"/>
+
+                                <!-- Antenna Copper Trace (Top) -->
+                                <path d="M 40 34 L 50 34 L 50 42 L 60 42 L 60 34 L 70 34 L 70 42 L 80 42 L 80 34 L 90 34 L 90 42 L 100 42 L 100 34 L 110 34" fill="none" stroke="#d97706" stroke-width="1.8"/>
+
+                                <!-- ESP-WROOM-32 Metal RF Shield -->
+                                <rect x="36" y="52" width="78" height="74" rx="3" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1.5"/>
+                                <rect x="40" y="56" width="70" height="66" rx="2" fill="#e2e8f0"/>
+                                <text x="75" y="73" font-family="'Fira Code', monospace" font-size="8.5" font-weight="bold" fill="#0f172a" text-anchor="middle">ESP-WROOM-32</text>
+                                <path d="M 68 81 A 8 8 0 0 1 82 81 M 71 84 A 5 5 0 0 1 79 84 M 74 87 A 2 2 0 0 1 76 87" fill="none" stroke="#0284c7" stroke-width="1.5" stroke-linecap="round"/>
+                                <text x="75" y="99" font-family="sans-serif" font-size="8" font-weight="bold" fill="#2563eb" text-anchor="middle">Wi-Fi + BT</text>
+                                <text x="75" y="112" font-family="'Fira Code', monospace" font-size="7" fill="#64748b" text-anchor="middle">ESP32 DevKit V1</text>
+
+                                <!-- Micro USB Port (Bottom) -->
+                                <rect x="60" y="246" width="30" height="18" rx="3" fill="#94a3b8" stroke="#475569" stroke-width="1.5"/>
+                                <rect x="65" y="253" width="20" height="9" rx="1.5" fill="#334155"/>
+
+                                <!-- CP2102 Chip -->
+                                <rect x="64" y="196" width="22" height="22" rx="2" fill="#27272a" stroke="#52525b" stroke-width="1"/>
+                                <circle cx="68" cy="200" r="1.5" fill="#71717a"/>
+                                <text x="75" y="210" font-size="5" fill="#a1a1aa" text-anchor="middle" font-family="'Fira Code', monospace">CP2102</text>
+
+                                <!-- Push Buttons EN / BOOT -->
+                                <rect x="33" y="230" width="11" height="11" rx="2" fill="#3f3f46" stroke="#71717a"/>
+                                <circle cx="38.5" cy="235.5" r="3" fill="#18181b"/>
+                                <text x="38.5" y="226" font-size="6" fill="#a1a1aa" text-anchor="middle">EN</text>
+
+                                <rect x="106" y="230" width="11" height="11" rx="2" fill="#3f3f46" stroke="#71717a"/>
+                                <circle cx="111.5" cy="235.5" r="3" fill="#18181b"/>
+                                <text x="111.5" y="226" font-size="6" fill="#a1a1aa" text-anchor="middle">BOOT</text>
+
+                                <!-- Right Pin Header (GPIO Connection Side) -->
+                                <rect x="115" y="52" width="14" height="168" rx="2" fill="#27272a" stroke="#3f3f46"/>
+
+                                <!-- Pin D14 (ENA) -->
+                                <circle cx="122" cy="115" r="3.5" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+                                <text x="110" y="118" font-family="'Fira Code', monospace" font-size="7" font-weight="bold" fill="#38bdf8" text-anchor="end">D14 (ENA)</text>
+
+                                <!-- Pin D27 (IN1) -->
+                                <circle cx="122" cy="135" r="3.5" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+                                <text x="110" y="138" font-family="'Fira Code', monospace" font-size="7" font-weight="bold" fill="#facc15" text-anchor="end">D27 (IN1)</text>
+
+                                <!-- Pin D26 (IN2) -->
+                                <circle cx="122" cy="155" r="3.5" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+                                <text x="110" y="158" font-family="'Fira Code', monospace" font-size="7" font-weight="bold" fill="#4ade80" text-anchor="end">D26 (IN2)</text>
+
+                                <!-- Pin GND -->
+                                <circle cx="122" cy="180" r="3.5" fill="#facc15" stroke="#ca8a04" stroke-width="1"/>
+                                <text x="110" y="183" font-family="'Fira Code', monospace" font-size="7" font-weight="bold" fill="#cbd5e1" text-anchor="end">GND</text>
+
+                                <!-- Other header pin holes -->
+                                <circle cx="122" cy="68" r="2.5" fill="#71717a"/>
+                                <circle cx="122" cy="82" r="2.5" fill="#71717a"/>
+                                <circle cx="122" cy="96" r="2.5" fill="#71717a"/>
+                                <circle cx="122" cy="198" r="2.5" fill="#71717a"/>
+                                <circle cx="122" cy="210" r="2.5" fill="#71717a"/>
+
+                                <!-- Left header dummy pins -->
+                                <rect x="22" y="52" width="10" height="168" rx="2" fill="#27272a"/>
+                                <circle cx="27" cy="68" r="2" fill="#71717a"/>
+                                <circle cx="27" cy="82" r="2" fill="#71717a"/>
+                                <circle cx="27" cy="96" r="2" fill="#71717a"/>
+                                <circle cx="27" cy="115" r="2" fill="#71717a"/>
+                                <circle cx="27" cy="135" r="2" fill="#71717a"/>
+                                <circle cx="27" cy="155" r="2" fill="#71717a"/>
+                                <circle cx="27" cy="180" r="2" fill="#71717a"/>
+                                <circle cx="27" cy="198" r="2" fill="#71717a"/>
+                                <circle cx="27" cy="210" r="2" fill="#71717a"/>
+                            </g>
+
+                            <!-- 2. L298N Dual H-Bridge Driver Module (Center: x=210, y=38) -->
+                            <g id="l298n-module">
+                                <!-- Main Red PCB Body -->
+                                <rect x="210" y="38" width="170" height="212" rx="8" fill="#b91c1c" stroke="#991b1b" stroke-width="2"/>
+                                <rect x="216" y="44" width="158" height="200" rx="5" fill="none" stroke="#fca5a5" stroke-width="0.8" opacity="0.6"/>
+
+                                <!-- Mounting Holes -->
+                                <circle cx="220" cy="48" r="3.5" fill="#0f172a" stroke="#fca5a5" stroke-width="1"/>
+                                <circle cx="370" cy="48" r="3.5" fill="#0f172a" stroke="#fca5a5" stroke-width="1"/>
+                                <circle cx="220" cy="240" r="3.5" fill="#0f172a" stroke="#fca5a5" stroke-width="1"/>
+                                <circle cx="370" cy="240" r="3.5" fill="#0f172a" stroke="#fca5a5" stroke-width="1"/>
+
+                                <!-- Extruded Aluminum Heatsink -->
+                                <rect x="248" y="68" width="94" height="60" rx="3" fill="url(#heatsink-grad)" stroke="#475569" stroke-width="1.5"/>
+                                <line x1="260" y1="68" x2="260" y2="128" stroke="#64748b" stroke-width="2"/>
+                                <line x1="272" y1="68" x2="272" y2="128" stroke="#64748b" stroke-width="2"/>
+                                <line x1="284" y1="68" x2="284" y2="128" stroke="#64748b" stroke-width="2"/>
+                                <line x1="296" y1="68" x2="296" y2="128" stroke="#64748b" stroke-width="2"/>
+                                <line x1="308" y1="68" x2="308" y2="128" stroke="#64748b" stroke-width="2"/>
+                                <line x1="320" y1="68" x2="320" y2="128" stroke="#64748b" stroke-width="2"/>
+                                <line x1="332" y1="68" x2="332" y2="128" stroke="#64748b" stroke-width="2"/>
+                                <text x="295" y="62" font-family="'Fira Code', monospace" font-size="10.5" font-weight="bold" fill="#ffffff" text-anchor="middle">L298N DUAL H-BRIDGE</text>
+
+                                <!-- Electrolytic Capacitor -->
+                                <circle cx="232" cy="74" r="12" fill="#1e293b" stroke="#94a3b8" stroke-width="1.5"/>
+                                <ellipse cx="232" cy="72" rx="10" ry="7" fill="#475569"/>
+                                <path d="M 226 72 L 238 72 M 232 66 L 232 78" stroke="#cbd5e1" stroke-width="1"/>
+
+                                <!-- 5V Voltage Regulator (78M05) -->
+                                <rect x="238" y="142" width="20" height="15" rx="2" fill="#1e293b" stroke="#64748b"/>
+                                <text x="248" y="153" font-size="5.5" fill="#94a3b8" text-anchor="middle">78M05</text>
+
+                                <!-- 5V Enable Jumper -->
+                                <rect x="224" y="168" width="10" height="14" rx="2" fill="#1e293b"/>
+                                <rect x="225" y="169" width="8" height="12" rx="1.5" fill="#facc15"/>
+                                <text x="229" y="191" font-size="6" fill="#fef08a" text-anchor="middle">5V EN</text>
+
+                                <!-- Logic Input Pins Header (ENA, IN1, IN2, IN3, IN4, ENB) at y=190 -->
+                                <rect x="268" y="178" width="102" height="24" rx="3" fill="#1e293b" stroke="#475569"/>
+                                
+                                <!-- Pin ENA -->
+                                <circle cx="278" cy="190" r="3.5" fill="#facc15" stroke="#b45309" stroke-width="1"/>
+                                <text x="278" y="172" font-family="'Fira Code', monospace" font-size="7" font-weight="bold" fill="#38bdf8" text-anchor="middle">ENA</text>
+                                
+                                <!-- Pin IN1 -->
+                                <circle cx="294" cy="190" r="3.5" fill="#facc15" stroke="#b45309" stroke-width="1"/>
+                                <text x="294" y="172" font-family="'Fira Code', monospace" font-size="7" font-weight="bold" fill="#facc15" text-anchor="middle">IN1</text>
+                                
+                                <!-- Pin IN2 -->
+                                <circle cx="310" cy="190" r="3.5" fill="#facc15" stroke="#b45309" stroke-width="1"/>
+                                <text x="310" y="172" font-family="'Fira Code', monospace" font-size="7" font-weight="bold" fill="#4ade80" text-anchor="middle">IN2</text>
+                                
+                                <!-- Pins IN3, IN4, ENB (inactive) -->
+                                <circle cx="326" cy="190" r="2.5" fill="#71717a"/>
+                                <text x="326" y="172" font-family="'Fira Code', monospace" font-size="6" fill="#94a3b8" text-anchor="middle">IN3</text>
+                                <circle cx="342" cy="190" r="2.5" fill="#71717a"/>
+                                <text x="342" y="172" font-family="'Fira Code', monospace" font-size="6" fill="#94a3b8" text-anchor="middle">IN4</text>
+                                <circle cx="358" cy="190" r="2.5" fill="#71717a"/>
+                                <text x="358" y="172" font-family="'Fira Code', monospace" font-size="6" fill="#94a3b8" text-anchor="middle">ENB</text>
+
+                                <!-- Power Screw Terminal Block (3-pin: 12V, GND, 5V) at bottom left -->
+                                <rect x="218" y="212" width="48" height="30" rx="3" fill="#0284c7" stroke="#0369a1" stroke-width="1.5"/>
+                                <circle cx="226" cy="227" r="4.5" fill="#e2e8f0" stroke="#64748b" stroke-width="1"/>
+                                <line x1="223" y1="227" x2="229" y2="227" stroke="#334155" stroke-width="1.5"/>
+                                <text x="226" y="209" font-size="6" font-weight="bold" fill="#f87171" text-anchor="middle">+12V</text>
+
+                                <circle cx="242" cy="227" r="4.5" fill="#e2e8f0" stroke="#64748b" stroke-width="1"/>
+                                <line x1="239" y1="227" x2="245" y2="227" stroke="#334155" stroke-width="1.5"/>
+                                <text x="242" y="209" font-size="6" font-weight="bold" fill="#e2e8f0" text-anchor="middle">GND</text>
+
+                                <circle cx="258" cy="227" r="4.5" fill="#e2e8f0" stroke="#64748b" stroke-width="1"/>
+                                <line x1="255" y1="227" x2="261" y2="227" stroke="#334155" stroke-width="1.5"/>
+                                <text x="258" y="209" font-size="6" font-weight="bold" fill="#facc15" text-anchor="middle">+5V</text>
+
+                                <!-- Motor A Output Screw Terminal (OUT1, OUT2) at right side -->
+                                <rect x="365" y="88" width="22" height="46" rx="3" fill="#0284c7" stroke="#0369a1" stroke-width="1.5"/>
+                                <circle cx="376" cy="100" r="4.5" fill="#e2e8f0" stroke="#64748b" stroke-width="1"/>
+                                <line x1="373" y1="100" x2="379" y2="100" stroke="#334155" stroke-width="1.5"/>
+                                <text x="357" y="103" font-size="7" font-weight="bold" fill="#f87171" text-anchor="end">OUT1</text>
+
+                                <circle cx="376" cy="122" r="4.5" fill="#e2e8f0" stroke="#64748b" stroke-width="1"/>
+                                <line x1="373" y1="122" x2="379" y2="122" stroke="#334155" stroke-width="1.5"/>
+                                <text x="357" y="125" font-size="7" font-weight="bold" fill="#38bdf8" text-anchor="end">OUT2</text>
+
+                                <!-- Dynamic Indicator LEDs on Board -->
+                                <circle id="dc-ena-led" cx="278" cy="198" r="3" fill="#475569"/>
+                                <circle id="dc-in1-led" cx="294" cy="198" r="3" fill="#475569"/>
+                                <circle id="dc-in2-led" cx="310" cy="198" r="3" fill="#475569"/>
+                            </g>
+
+                            <!-- 3. External Power Supply (DC Jack / Power Source) -->
+                            <g id="dc-power-source">
+                                <rect x="180" y="278" width="40" height="24" rx="4" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+                                <rect x="220" y="282" width="35" height="16" rx="3" fill="#10b981"/>
+                                <text x="237" y="293" font-size="7" font-weight="bold" fill="#ffffff" text-anchor="middle">12V DC</text>
+                                <circle cx="195" cy="290" r="5" fill="#0f172a" stroke="#94a3b8"/>
+                                
+                                <!-- 12V+ Red Wire to L298N -->
+                                <path d="M 230 282 Q 225 255 226 232" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+                                <!-- GND- Black Wire to L298N -->
+                                <path d="M 245 282 Q 244 255 242 232" fill="none" stroke="#020617" stroke-width="4.5" stroke-linecap="round"/>
+                                <path d="M 245 282 Q 244 255 242 232" fill="none" stroke="#64748b" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2,2"/>
+                            </g>
+
+                            <!-- 4. Jumper Wires: ESP32 to L298N -->
+                            <!-- Wire 1: D14 -> ENA (Blue) -->
+                            <path d="M 122 115 C 160 115, 230 190, 278 190" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+                            
+                            <!-- Wire 2: D27 -> IN1 (Yellow) -->
+                            <path d="M 122 135 C 170 135, 240 190, 294 190" fill="none" stroke="#eab308" stroke-width="3" stroke-linecap="round"/>
+
+                            <!-- Wire 3: D26 -> IN2 (Green) -->
+                            <path d="M 122 155 C 180 155, 250 190, 310 190" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round"/>
+
+                            <!-- Wire 4: GND -> L298N GND (Common GND - Black with white dashed overlay) -->
+                            <path d="M 122 180 C 140 220, 180 246, 242 232" fill="none" stroke="#020617" stroke-width="5" stroke-linecap="round"/>
+                            <path d="M 122 180 C 140 220, 180 246, 242 232" fill="none" stroke="#cbd5e1" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="3,3"/>
+
+                            <!-- 5. DC Motor with Propeller (Right Side) -->
+                            <g id="dc-motor-assembly">
+                                <!-- Motor Wires from L298N OUT1/OUT2 -->
+                                <!-- OUT1 (Red wire) -->
+                                <path d="M 376 100 C 398 100, 408 118, 418 123" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+                                <!-- OUT2 (Blue wire) -->
+                                <path d="M 376 122 C 398 122, 408 138, 418 143" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+
+                                <!-- Motor Solder Tabs -->
+                                <rect x="416" y="120" width="6" height="6" rx="1" fill="#cbd5e1"/>
+                                <rect x="416" y="140" width="6" height="6" rx="1" fill="#cbd5e1"/>
+
+                                <!-- Motor Main Body (Cylindrical Can) -->
+                                <rect x="422" y="105" width="60" height="60" rx="8" fill="url(#motor-cyl)" stroke="#475569" stroke-width="2"/>
+                                <path d="M 430 105 L 430 165" stroke="#94a3b8" stroke-width="1.5" opacity="0.6"/>
+                                <path d="M 474 105 L 474 165" stroke="#334155" stroke-width="1.5" opacity="0.6"/>
+                                <text x="452" y="139" font-family="'Fira Code', monospace" font-size="8" font-weight="bold" fill="#0f172a" text-anchor="middle">DC MOTOR</text>
+
+                                <!-- Front Bearing / Shaft Collar -->
+                                <rect x="482" y="127" width="12" height="16" rx="2" fill="#64748b"/>
+                                <!-- Metal Shaft -->
+                                <line x1="494" y1="135" x2="515" y2="135" stroke="#e2e8f0" stroke-width="5" stroke-linecap="round"/>
+
+                                <!-- Propeller Fan (Rotates in JS around cx=515 cy=135) -->
+                                <g id="dc-propeller" transform="rotate(0 515 135)">
+                                    <!-- 4 Blades (symmetric around 515, 135) -->
+                                    <ellipse cx="515" cy="102" rx="7" ry="24" fill="#f59e0b" opacity="0.92"/>
+                                    <ellipse cx="515" cy="168" rx="7" ry="24" fill="#f59e0b" opacity="0.92"/>
+                                    <ellipse cx="482" cy="135" rx="24" ry="7" fill="#f59e0b" opacity="0.92"/>
+                                    <ellipse cx="548" cy="135" rx="24" ry="7" fill="#f59e0b" opacity="0.92"/>
+                                    <!-- Center Hub -->
+                                    <circle cx="515" cy="135" r="10" fill="#00979C" stroke="#ffffff" stroke-width="2"/>
+                                    <circle cx="515" cy="135" r="4" fill="#ef4444"/>
+                                </g>
+                            </g>
+                        </svg>
+
+                        <!-- Controls inside Canvas -->
+                        <div class="sim-controls">
+                            <div class="sim-controls-row">
+                                <span style="font-size:0.9rem; color:#94a3b8;">สั่งทิศทาง:</span>
+                                <div class="sim-btn-group">
+                                    <button class="ctrl-btn" id="dc-btn-cw">CW (ตามเข็ม)</button>
+                                    <button class="ctrl-btn" id="dc-btn-ccw">CCW (ทวนเข็ม)</button>
+                                    <button class="ctrl-btn btn-stop" id="dc-btn-stop">เบรก (STOP)</button>
+                                </div>
+                            </div>
+                            <div class="sim-controls-row">
+                                <div class="slider-group">
+                                    <label for="dc-speed-slider">ความเร็ว (PWM ENA):</label>
+                                    <input type="range" id="dc-speed-slider" min="0" max="255" value="200">
+                                    <span class="badge-val" id="dc-speed-display">200 (78%)</span>
+                                </div>
+                            </div>
+                            <div class="sim-controls-row" style="justify-content: space-between; font-size: 0.85rem; border-top: 1px solid #334155; padding-top: 6px;">
+                                <span>สถานะ: <strong id="dc-dir-badge" style="color: #4ade80;">หมุนตามเข็ม (CW)</strong></span>
+                                <span>ความเร็วรอบประมาณ: <strong id="dc-rpm-display" style="color: #facc15;">941 RPM</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Code & Serial -->
+                    <div class="ide-container">
+                        <div class="ide-header">
+                            <div class="ide-dots">
+                                <div class="ide-dot red"></div>
+                                <div class="ide-dot yellow"></div>
+                                <div class="ide-dot green"></div>
+                            </div>
+                            <div class="ide-title">esp32_dc_l298n.ino</div>
+                        </div>
+                        <div class="ide-code">
+<span class="cmt">// ========================================================</span>
+<span class="cmt">// ควบคุมความเร็วและทิศทาง DC Motor ด้วย ESP32 และ L298N</span>
+<span class="cmt">// ========================================================</span>
+
+<span class="cmt">// กำหนดขา GPIO ของ ESP32 ให้ตรงกับวงจรในภาพ</span>
+<span class="kw">const int</span> pinENA = <span class="num">14</span>;  <span class="cmt">// ขา PWM คุมความเร็ว (ต่อกับ ENA)</span>
+<span class="kw">const int</span> pinIN1 = <span class="num">27</span>;  <span class="cmt">// ขาดิจิทัลคุมทิศทาง (ต่อกับ IN1)</span>
+<span class="kw">const int</span> pinIN2 = <span class="num">26</span>;  <span class="cmt">// ขาดิจิทัลคุมทิศทาง (ต่อกับ IN2)</span>
+
+<span class="cmt">// ตั้งค่าคุณสมบัติสัญญาณ PWM (LEDC สำหรับ ESP32)</span>
+<span class="kw">const int</span> pwmFreq = <span class="num">5000</span>;     <span class="cmt">// ความถี่ 5 kHz สำหรับ DC Motor</span>
+<span class="kw">const int</span> pwmChannel = <span class="num">0</span>;     <span class="cmt">// LEDC Channel 0</span>
+<span class="kw">const int</span> pwmResolution = <span class="num">8</span>;  <span class="cmt">// ความละเอียด 8-bit (0 - 255)</span>
+
+<span class="type">void</span> <span class="func">setup</span>() {
+  <span class="type">Serial</span>.<span class="func">begin</span>(<span class="num">115200</span>);
+
+  <span class="cmt">// 1. กำหนดโหมดขาเอาต์พุตดิจิทัล</span>
+  <span class="func">pinMode</span>(pinIN1, <span class="kw">OUTPUT</span>);
+  <span class="func">pinMode</span>(pinIN2, <span class="kw">OUTPUT</span>);
+
+  <span class="cmt">// 2. กำหนดช่องสัญญาณ PWM ของ ESP32 (Core 2.x)</span>
+  <span class="func">ledcSetup</span>(pwmChannel, pwmFreq, pwmResolution);
+  <span class="func">ledcAttachPin</span>(pinENA, pwmChannel);
+  <span class="cmt">// หมายเหตุ: ใน ESP32 Core 3.x ขึ้นไป สามารถใช้ ledcAttach(pinENA, 5000, 8)</span>
+  <span class="cmt">// หรือใช้ analogWrite(pinENA, value) ได้โดยตรง</span>
+
+  <span class="type">Serial</span>.<span class="func">println</span>(<span class="str">"ESP32 + L298N DC Motor Ready!"</span>);
+}
+
+<span class="type">void</span> <span class="func">loop</span>() {
+  <span class="cmt">// --- ขั้นที่ 1: หมุนตามเข็ม (CW) ความเร็ว 200 (ประมาณ 78%) ---</span>
+  <span class="type">Serial</span>.<span class="func">println</span>(<span class="str">"1. หมุนตามเข็มนาฬิกา (CW) - Speed: 200/255"</span>);
+  <span class="func">digitalWrite</span>(pinIN1, <span class="kw">HIGH</span>);
+  <span class="func">digitalWrite</span>(pinIN2, <span class="kw">LOW</span>);
+  <span class="func">ledcWrite</span>(pwmChannel, <span class="num">200</span>);
+  <span class="func">delay</span>(<span class="num">3000</span>);
+
+  <span class="cmt">// --- ขั้นที่ 2: หยุดแบบเบรกทันที (Brake) 1 วินาที ---</span>
+  <span class="type">Serial</span>.<span class="func">println</span>(<span class="str">"2. เบรกหยุดทันที (Brake)"</span>);
+  <span class="func">digitalWrite</span>(pinIN1, <span class="kw">HIGH</span>);
+  <span class="func">digitalWrite</span>(pinIN2, <span class="kw">HIGH</span>);
+  <span class="func">ledcWrite</span>(pwmChannel, <span class="num">0</span>);
+  <span class="func">delay</span>(<span class="num">1000</span>);
+
+  <span class="cmt">// --- ขั้นที่ 3: หมุนทวนเข็ม (CCW) ความเร็ว 150 (ประมาณ 59%) ---</span>
+  <span class="type">Serial</span>.<span class="func">println</span>(<span class="str">"3. หมุนทวนเข็มนาฬิกา (CCW) - Speed: 150/255"</span>);
+  <span class="func">digitalWrite</span>(pinIN1, <span class="kw">LOW</span>);
+  <span class="func">digitalWrite</span>(pinIN2, <span class="kw">HIGH</span>);
+  <span class="func">ledcWrite</span>(pwmChannel, <span class="num">150</span>);
+  <span class="func">delay</span>(<span class="num">3000</span>);
+
+  <span class="cmt">// --- ขั้นที่ 4: หยุดแบบปล่อยอิสระ (Coast) 1.5 วินาที ---</span>
+  <span class="type">Serial</span>.<span class="func">println</span>(<span class="str">"4. ปล่อยอิสระ (Coast)"</span>);
+  <span class="func">digitalWrite</span>(pinIN1, <span class="kw">LOW</span>);
+  <span class="func">digitalWrite</span>(pinIN2, <span class="kw">LOW</span>);
+  <span class="func">ledcWrite</span>(pwmChannel, <span class="num">0</span>);
+  <span class="func">delay</span>(<span class="num">1500</span>);
+}
+                        </div>
+                        <div class="serial-box" id="dc-serial-out">
+                            <div class="serial-line">> ESP32 Serial Monitor Initialized (115200 baud)...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 SECTION 3: Stepper Motor & ULN2003
+                 ============================================================ -->
+            <section id="stepper" class="section-card">
+                <h2 class="section-title">3. สเต็ปเปอร์มอเตอร์ (28BYJ-48) และไอซีขับ ULN2003</h2>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                    <a href="datasheets/28BYJ_48_Stepper_Motor_Datasheet.pdf" download class="inline-datasheet-badge">📑 28BYJ-48 Datasheet (PDF)</a>
+                    <a href="datasheets/ULN2003A_Darlington_Array_Datasheet.pdf" download class="inline-datasheet-badge">📑 ULN2003A Datasheet (PDF)</a>
+                </div>
+                <p>สเต็ปเปอร์มอเตอร์รุ่น <strong>28BYJ-48</strong> เป็นมอเตอร์แบบ Unipolar 4 เฟส 5 สาย ที่มีชุดเฟืองทดรอบอัตราส่วน 64:1 เหมาะสำหรับงานกำหนดมุมที่ต้องการความแม่นยำสูง โดยใช้ไอซี <strong>ULN2003</strong> (Darlington Transistor Array) ช่วยขยายกระแสขับขดลวดแม่เหล็กไฟฟ้า</p>
+
+                <!-- Sequence Table -->
+                <div style="background: #f8fafc; padding: 1.25rem; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 1rem 0;">
+                    <h4 style="color: #d97706; margin-bottom: 8px;">ลำดับการขับสเต็ปเปอร์มอเตอร์ (Stepping Sequences)</h4>
+                    <div style="overflow-x:auto;">
+                        <table style="width:100%; border-collapse: collapse; font-size: 0.9rem; text-align: center;">
+                            <tr style="background: #e2e8f0; font-weight: bold;">
+                                <td style="padding: 6px;">รูปแบบการขับ</td>
+                                <td style="padding: 6px;">ลำดับขั้นตอน (Sequence)</td>
+                                <td style="padding: 6px;">จำนวนสเต็ป/รอบโรเตอร์</td>
+                                <td style="padding: 6px;">สเต็ปหลังเกียร์ 64:1</td>
+                                <td style="padding: 6px;">จุดเด่น</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td><strong>Wave Drive</strong> (1 เฟส)</td>
+                                <td>A &rarr; B &rarr; C &rarr; D</td>
+                                <td>4 สเต็ป</td>
+                                <td>2,048 สเต็ป</td>
+                                <td>ประหยัดพลังงานที่สุด แต่แรงบิดต่ำ</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0; background: #fff;">
+                                <td><strong>Full-Step</strong> (2 เฟส)</td>
+                                <td>AB &rarr; BC &rarr; CD &rarr; DA</td>
+                                <td>4 สเต็ป</td>
+                                <td>2,048 สเต็ป</td>
+                                <td>แรงบิดสูงสุด (Torque สูง) ก้าวคงที่</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Half-Step</strong> (1-2 เฟส)</td>
+                                <td>A &rarr; AB &rarr; B &rarr; BC &rarr; C ...</td>
+                                <td>8 สเต็ป</td>
+                                <td><strong>4,096 สเต็ป</strong></td>
+                                <td>ความละเอียด 2 เท่า หมุนนุ่มนวล ไม่กระตุก</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Simulator Layout -->
+                <div class="simulator-layout">
+                    <!-- Simulator Canvas -->
+                    <div class="simulator-canvas">
+                        <svg id="stepper-sim-svg" width="100%" height="260" viewBox="0 0 360 260">
+                            <defs>
+                                <filter id="glow-led" x="-30%" y="-30%" width="160%" height="160%">
+                                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                                </filter>
+                            </defs>
+
+                            <!-- ULN2003 Driver Board (Left) -->
+                            <rect x="25" y="45" width="120" height="160" rx="6" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+                            <rect x="45" y="65" width="40" height="85" rx="3" fill="#0f172a" stroke="#64748b" stroke-width="1.5"/>
+                            <text x="65" y="112" fill="#94a3b8" font-size="8" font-weight="bold" text-anchor="middle" transform="rotate(-90 65 112)">ULN2003A</text>
+                            
+                            <!-- 4 LEDs on Driver Board -->
+                            <g transform="translate(100, 65)">
+                                <circle id="step-led-a" cx="15" cy="15" r="5" fill="#334155"/>
+                                <text x="25" y="18" fill="#cbd5e1" font-size="9">A</text>
+
+                                <circle id="step-led-b" cx="15" cy="35" r="5" fill="#334155"/>
+                                <text x="25" y="38" fill="#cbd5e1" font-size="9">B</text>
+
+                                <circle id="step-led-c" cx="15" cy="55" r="5" fill="#334155"/>
+                                <text x="25" y="58" fill="#cbd5e1" font-size="9">C</text>
+
+                                <circle id="step-led-d" cx="15" cy="75" r="5" fill="#334155"/>
+                                <text x="25" y="78" fill="#cbd5e1" font-size="9">D</text>
+                            </g>
+                            <text x="85" y="58" fill="#f59e0b" font-size="10" font-weight="bold" text-anchor="middle">ULN2003</text>
+
+                            <!-- Connection Cable (5 wires bundle) -->
+                            <path d="M 145 125 Q 185 125 210 125" stroke="#f59e0b" stroke-width="8" stroke-linecap="round" opacity="0.8"/>
+
+                            <!-- Stepper Motor 28BYJ-48 (Right) -->
+                            <circle cx="270" cy="125" r="58" fill="#334155" stroke="#64748b" stroke-width="3"/>
+                            <circle cx="270" cy="125" r="48" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+                            <text x="270" y="86" fill="#cbd5e1" font-size="9" text-anchor="middle">28BYJ-48 5V</text>
+
+                            <!-- Rotating Gear Disc and Pointer Needle -->
+                            <g id="stepper-rotor" transform="rotate(0 270 125)">
+                                <!-- Disc with Angle Ticks -->
+                                <circle cx="270" cy="125" r="36" fill="#00979C" stroke="#fff" stroke-width="2"/>
+                                <circle cx="270" cy="125" r="6" fill="#fff"/>
+                                <!-- Indicator Needle -->
+                                <polygon points="270,95 264,125 276,125" fill="#ef4444"/>
+                                <circle cx="270" cy="98" r="3" fill="#fff"/>
+                            </g>
+                            
+                            <!-- Angle Degree Scale Labels -->
+                            <text x="270" y="74" fill="#94a3b8" font-size="8" text-anchor="middle">0° / 360°</text>
+                            <text x="325" y="128" fill="#94a3b8" font-size="8">90°</text>
+                            <text x="270" y="178" fill="#94a3b8" font-size="8" text-anchor="middle">180°</text>
+                            <text x="215" y="128" fill="#94a3b8" font-size="8">270°</text>
+                        </svg>
+
+                        <!-- Controls Panel -->
+                        <div class="sim-controls">
+                            <div class="sim-controls-row">
+                                <span style="font-size:0.9rem; color:#94a3b8;">โหมดการขับ:</span>
+                                <div class="sim-btn-group">
+                                    <button class="ctrl-btn" id="step-btn-wave">Wave Drive</button>
+                                    <button class="ctrl-btn" id="step-btn-full">Full-Step</button>
+                                    <button class="ctrl-btn active" id="step-btn-half">Half-Step (แนะนำ)</button>
+                                </div>
+                            </div>
+                            <div class="sim-controls-row">
+                                <span style="font-size:0.9rem; color:#94a3b8;">สั่งหมุน:</span>
+                                <div class="sim-btn-group">
+                                    <button class="ctrl-btn" id="step-btn-cw">ก้าวตามเข็ม (&rarr;)</button>
+                                    <button class="ctrl-btn" id="step-btn-ccw">ก้าวทวนเข็ม (&larr;)</button>
+                                    <button class="ctrl-btn" id="step-btn-run">▶️ หมุนต่อเนื่อง (Run CW)</button>
+                                </div>
+                            </div>
+                            <div class="sim-controls-row">
+                                <div class="slider-group">
+                                    <label for="step-speed-slider">ความเร็ว (Delay ms):</label>
+                                    <input type="range" id="step-speed-slider" min="30" max="130" value="70">
+                                    <span class="badge-val" id="step-speed-display">70</span>
+                                </div>
+                            </div>
+                            <div class="sim-controls-row" style="justify-content: space-between; font-size: 0.85rem; border-top: 1px solid #334155; padding-top: 6px;">
+                                <span>มุมปัจจุบัน: <strong id="step-angle-display" style="color: #38bdf8;">0°</strong></span>
+                                <span>จำนวนสเต็ปสะสม: <strong id="step-count-display" style="color: #4ade80;">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Code & Serial -->
+                    <div class="ide-container">
+                        <div class="ide-header">
+                            <div class="ide-dots">
+                                <div class="ide-dot red"></div>
+                                <div class="ide-dot yellow"></div>
+                                <div class="ide-dot green"></div>
+                            </div>
+                            <div class="ide-title">stepper_uln2003.ino</div>
+                        </div>
+                        <div class="ide-code">
+<span class="pp">#include</span> <span class="str">&lt;Stepper.h&gt;</span>
+
+<span class="kw">const int</span> stepsPerRev = <span class="num">2048</span>; <span class="cmt">// สเต็ปต่อรอบ (Full-step)</span>
+<span class="cmt">// ลำดับขาเชื่อมต่อ IN1, IN3, IN2, IN4</span>
+<span class="type">Stepper</span> <span class="func">myStepper</span>(stepsPerRev, <span class="num">8</span>, <span class="num">10</span>, <span class="num">9</span>, <span class="num">11</span>);
+
+<span class="type">void</span> <span class="func">setup</span>() {
+  <span class="func">myStepper.setSpeed</span>(<span class="num">10</span>); <span class="cmt">// ตั้งความเร็ว 10 RPM</span>
+  <span class="type">Serial</span>.<span class="func">begin</span>(<span class="num">9600</span>);
+}
+
+<span class="type">void</span> <span class="func">loop</span>() {
+  <span class="type">Serial</span>.<span class="func">println</span>(<span class="str">"หมุนตามเข็ม 1 รอบ (360 องศา)"</span>);
+  <span class="func">myStepper.step</span>(stepsPerRev);
+  <span class="func">delay</span>(<span class="num">1000</span>);
+
+  <span class="type">Serial</span>.<span class="func">println</span>(<span class="str">"หมุนทวนเข็มครึ่งรอบ (180 องศา)"</span>);
+  <span class="func">myStepper.step</span>(-stepsPerRev / <span class="num">2</span>);
+  <span class="func">delay</span>(<span class="num">1000</span>);
+}
+                        </div>
+                        <div class="serial-box" id="step-serial-out">
+                            <div class="serial-line">> ULN2003 Stepper Driver Ready...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 SECTION 4: Servo Motor (PWM)
+                 ============================================================ -->
+            <section id="servo" class="section-card">
+                <h2 class="section-title">4. เซอร์โวมอเตอร์ (Servo Motor) และสัญญาณพัลส์ควบคุม PWM</h2>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                    <a href="datasheets/SG90_Micro_Servo_Datasheet.pdf" download class="inline-datasheet-badge">📑 SG90 Servo Datasheet (PDF)</a>
+                    <a href="datasheets/MG995_High_Torque_Servo_Datasheet.pdf" download class="inline-datasheet-badge">📑 MG995 Metal Servo Datasheet (PDF)</a>
+                </div>
+                <p>เซอร์โวมอเตอร์มาตรฐาน (เช่น <strong>SG90</strong> หรือ <strong>MG995</strong>) เป็นระบบควบคุมตำแหน่งเชิงมุมแบบวงปิด (Closed-loop) ที่หมุนได้ 0 ถึง 180 องศา สั่งงานด้วยสัญญาณพัลส์ความถี่ <strong>50Hz (คาบเวลา 20 ms)</strong> โดยความกว้างของพัลส์ช่วง HIGH จะเป็นตัวกำหนดองศา:</p>
+
+                <!-- Servo Pulse Specs Box -->
+                <div style="background: #f8fafc; padding: 1.25rem; border-radius: 8px; border-left: 4px solid #3b82f6; margin: 1rem 0;">
+                    <h4 style="color: #1d4ed8; margin-bottom: 8px;">📐 ความสัมพันธ์ระหว่างความกว้างพัลส์และองศาของเซอร์โว (50Hz / 20ms Period)</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 0.95rem;">
+                        <div style="background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                            <strong>ตำแหน่งซ้ายสุด (0°)</strong><br>
+                            ความกว้างพัลส์: <code>1.0 ms (1000 µs)</code><br>
+                            Duty Cycle: <code>5.0%</code>
+                        </div>
+                        <div style="background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                            <strong>ตำแหน่งกึ่งกลาง (90°)</strong><br>
+                            ความกว้างพัลส์: <code>1.5 ms (1500 µs)</code><br>
+                            Duty Cycle: <code>7.5%</code>
+                        </div>
+                        <div style="background: #fff; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+                            <strong>ตำแหน่งขวาสุด (180°)</strong><br>
+                            ความกว้างพัลส์: <code>2.0 ms (2000 µs)</code><br>
+                            Duty Cycle: <code>10.0%</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulator Layout -->
+                <div class="simulator-layout">
+                    <!-- Simulator Canvas -->
+                    <div class="simulator-canvas">
+                        <!-- Oscilloscope Pulse Display Header -->
+                        <div class="scope-display">
+                            <div class="scope-header">
+                                <span>📊 ออสซิลโลสโคปจำลอง (50Hz PWM Signal)</span>
+                                <span>Period: 20.0 ms</span>
+                            </div>
+                            <svg width="100%" height="45" viewBox="0 0 280 45">
+                                <!-- Wave grid lines -->
+                                <line x1="0" y1="35" x2="280" y2="35" stroke="#334155" stroke-width="1"/>
+                                <line x1="0" y1="10" x2="280" y2="10" stroke="#334155" stroke-width="1" stroke-dasharray="2,2"/>
+                                <!-- Waveform -->
+                                <path d="M 10 35 L 20 35 L 20 10" stroke="#38bdf8" stroke-width="2" fill="none"/>
+                                <!-- Dynamic High Rect -->
+                                <rect id="scope-wave-high" x="20" y="10" width="21" height="25" fill="rgba(56, 189, 248, 0.25)" stroke="#38bdf8" stroke-width="2"/>
+                                <!-- Low continuation -->
+                                <line x1="41" y1="35" x2="260" y2="35" stroke="#38bdf8" stroke-width="2"/>
+                                <line x1="260" y1="35" x2="260" y2="10" stroke="#38bdf8" stroke-width="2"/>
+                                <text x="140" y="42" fill="#64748b" font-size="8" text-anchor="middle">ช่วง LOW (~18-19ms)</text>
+                            </svg>
+                        </div>
+
+                        <!-- Servo SG90 SVG (Translucent Blue) -->
+                        <svg id="servo-sim-svg" width="100%" height="200" viewBox="0 0 360 200">
+                            <!-- Degree Scale Arc (0 to 180) -->
+                            <path d="M 100 140 A 80 80 0 0 1 260 140" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="4,4"/>
+                            <text x="90" y="145" fill="#94a3b8" font-size="10" text-anchor="end">0°</text>
+                            <text x="180" y="50" fill="#94a3b8" font-size="10" text-anchor="middle">90°</text>
+                            <text x="270" y="145" fill="#94a3b8" font-size="10">180°</text>
+
+                            <!-- SG90 Body (Translucent Blue) -->
+                            <rect x="135" y="90" width="90" height="90" rx="8" fill="#0284c7" opacity="0.85" stroke="#38bdf8" stroke-width="2"/>
+                            <!-- Mounting Ears -->
+                            <rect x="120" y="120" width="120" height="12" rx="2" fill="#0284c7" opacity="0.85"/>
+                            <circle cx="126" cy="126" r="3" fill="#0f172a"/>
+                            <circle cx="234" cy="126" r="3" fill="#0f172a"/>
+                            <!-- Internal Gear Silhouette -->
+                            <circle cx="180" cy="140" r="24" fill="#0369a1" opacity="0.6"/>
+                            <text x="180" y="172" fill="#e0f2fe" font-size="10" font-weight="bold" text-anchor="middle">SG90 9g</text>
+
+                            <!-- Servo Output Shaft and Rotatable Horn (Rotated via JS) -->
+                            <g id="servo-horn" transform="rotate(0 180 140)">
+                                <!-- White Horn -->
+                                <circle cx="180" cy="140" r="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+                                <!-- Arm Pointer pointing Up (at 90 deg neutral) -->
+                                <polygon points="174,140 186,140 183,72 177,72" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+                                <circle cx="180" cy="76" r="3" fill="#ef4444"/>
+                                <circle cx="180" cy="92" r="2.5" fill="#94a3b8"/>
+                                <circle cx="180" cy="108" r="2.5" fill="#94a3b8"/>
+                                <!-- Center Screw -->
+                                <circle cx="180" cy="140" r="4" fill="#334155"/>
+                            </g>
+                        </svg>
+
+                        <!-- Controls Panel -->
+                        <div class="sim-controls">
+                            <div class="sim-controls-row">
+                                <div class="slider-group">
+                                    <label for="servo-slider">ปรับมุมองศา (0°-180°):</label>
+                                    <input type="range" id="servo-slider" min="0" max="180" value="90">
+                                    <span class="badge-val" id="servo-angle-display">90°</span>
+                                </div>
+                            </div>
+                            <div class="sim-controls-row">
+                                <span style="font-size:0.9rem; color:#94a3b8;">มุมลัด (Presets):</span>
+                                <div class="sim-btn-group">
+                                    <button class="ctrl-btn" data-servo-angle="0">0°</button>
+                                    <button class="ctrl-btn" data-servo-angle="45">45°</button>
+                                    <button class="ctrl-btn active" data-servo-angle="90">90°</button>
+                                    <button class="ctrl-btn" data-servo-angle="135">135°</button>
+                                    <button class="ctrl-btn" data-servo-angle="180">180°</button>
+                                </div>
+                                <button class="ctrl-btn" id="servo-btn-sweep" style="margin-left:auto;">🔄 กวาดมุมอัตโนมัติ (Sweep 0-180°)</button>
+                            </div>
+                            <div class="sim-controls-row" style="justify-content: space-between; font-size: 0.85rem; border-top: 1px solid #334155; padding-top: 6px;">
+                                <span>ความกว้างพัลส์: <strong id="servo-pulse-display" style="color: #38bdf8;">1.50 ms (1500 µs)</strong></span>
+                                <span>Duty Cycle: <strong id="servo-duty-display" style="color: #facc15;">7.5%</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Code & Serial -->
+                    <div class="ide-container">
+                        <div class="ide-header">
+                            <div class="ide-dots">
+                                <div class="ide-dot red"></div>
+                                <div class="ide-dot yellow"></div>
+                                <div class="ide-dot green"></div>
+                            </div>
+                            <div class="ide-title">servo_sg90.ino</div>
+                        </div>
+                        <div class="ide-code">
+<span class="pp">#include</span> <span class="str">&lt;Servo.h&gt;</span>
+
+<span class="type">Servo</span> <span class="func">myservo</span>;  <span class="cmt">// สร้างอ็อบเจกต์ Servo</span>
+<span class="kw">const int</span> servoPin = <span class="num">9</span>;
+
+<span class="type">void</span> <span class="func">setup</span>() {
+  <span class="func">myservo.attach</span>(servoPin); <span class="cmt">// เชื่อมต่อเซอร์โวที่ขา 9</span>
+  <span class="type">Serial</span>.<span class="func">begin</span>(<span class="num">9600</span>);
+}
+
+<span class="type">void</span> <span class="func">loop</span>() {
+  <span class="cmt">// สั่งหมุนไป 0, 90, 180 องศา</span>
+  <span class="func">myservo.write</span>(<span class="num">0</span>);
+  <span class="func">delay</span>(<span class="num">1000</span>);
+
+  <span class="func">myservo.write</span>(<span class="num">90</span>);
+  <span class="func">delay</span>(<span class="num">1000</span>);
+
+  <span class="func">myservo.write</span>(<span class="num">180</span>);
+  <span class="func">delay</span>(<span class="num">1000</span>);
+}
+                        </div>
+                        <div class="serial-box" id="servo-serial-out">
+                            <div class="serial-line">> Servo SG90 Initialized (50Hz PWM)...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 SECTION 5: แบบทดสอบท้ายบท (Quiz)
+                 ============================================================ -->
+            <section id="quiz" class="section-card">
+                <div class="page-hero" style="margin-bottom: 2rem; background: linear-gradient(135deg, #e0f7f7 0%, #fff 100%);">
+                    <svg width="70" height="70" viewBox="0 0 100 100" style="flex-shrink:0">
+                        <circle cx="50" cy="50" r="45" fill="#e0f7f7" stroke="#00979C" stroke-width="3"/>
+                        <path d="M30,50 L45,65 L70,35" fill="none" stroke="#00979C" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <div class="page-hero-text">
+                        <h2 style="font-size: 1.8rem; margin-bottom: 6px;">แบบทดสอบท้ายบท: การควบคุมมอเตอร์</h2>
+                        <p style="font-size: 1rem;">แบบทดสอบวัดความเข้าใจ 10 ข้อ (DC Motor, Stepper, Servo) เกณฑ์ผ่าน 8/10 คะแนนเพื่อรับใบประกาศนียบัตร</p>
+                    </div>
+                </div>
+
+                <div id="quiz-container">
+                    <!-- Quiz and Certificate will be injected here via script.js -->
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
