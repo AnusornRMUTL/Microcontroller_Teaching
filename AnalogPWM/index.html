@@ -13,18 +13,17 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar Navigation (Mock) -->
+        <!-- Sidebar Navigation -->
         <aside class="sidebar">
-            <h2 class="sidebar-title">Microcontroller</h2>
+            <div class="sidebar-header">
+                <h2>Microcontroller</h2>
+                <p>Analog & PWM</p>
+            </div>
             <nav class="sidebar-nav">
-                <a href="../C_And_Arduino/index.html">1. ภาษา C & Arduino</a>
-                <a href="../IOPorts/index.html">2. พอร์ตดิจิทัล I/O</a>
-                <a href="../ADC/index.html">3. แอนะล็อก ADC</a>
-                <a href="index.html" class="active">4. สัญญาณแอนะล็อก & PWM</a>
-                <a href="../DataTransfer/index.html">5. การรับ-ส่งข้อมูล</a>
-                <a href="../DataSerial/index.html">6. โปรโตคอล I2C & SPI</a>
-                <a href="../DataSerial2/index.html">7. UART, RS232 & RS485</a>
-                <a href="../index.html" style="margin-top: 1rem; color: #00979C; font-weight: bold; display: block;">← กลับหน้าหลัก</a>
+                <a href="#intro" class="nav-link active">1. ทฤษฎีแอนะล็อก & PWM</a>
+                <a href="#simulator" class="nav-link">2. วงจรจำลอง (Simulator)</a>
+                <a href="#quiz" class="nav-link">3. แบบทดสอบท้ายบท</a>
+                <a href="../index.html" class="nav-link" style="margin-top: 1rem; color: #00979C; font-weight: bold;">← กลับหน้าหลัก</a>
             </nav>
         </aside>
 
@@ -36,7 +35,7 @@
             </header>
 
             <!-- 1. Introduction (ทฤษฎีและความสำคัญ) -->
-            <section class="section-card theory-section">
+            <section id="intro" class="section-card theory-section">
                 <h2>1. ทฤษฎีเบื้องต้น (Introduction)</h2>
                 <div class="theory-grid">
                     <div class="theory-box">
@@ -139,7 +138,7 @@
             </section>
 
             <!-- 2. Interactive Simulator & Code -->
-            <section class="section-card simulator-section">
+            <section id="simulator" class="section-card simulator-section">
                 <h2>2. วงจรจำลอง (Interactive Simulator)</h2>
                 <p>ทดลองเลื่อนแถบสไลด์ (ตัวต้านทานปรับค่าได้) เพื่อดูการเปลี่ยนแปลงของค่า ADC และความสว่างของ LED ผ่าน PWM</p>
                 
@@ -229,7 +228,7 @@
             </section>
 
             <!-- 3. End-of-Lesson Quiz -->
-            <section class="section-card quiz-section">
+            <section id="quiz" class="section-card quiz-section">
                 <h2>3. แบบทดสอบท้ายบท (Quiz)</h2>
                 <div id="quiz-container">
                     <!-- Quiz will be injected here via JavaScript -->

@@ -1,7 +1,47 @@
 document.addEventListener('DOMContentLoaded', () => {
+    initNavigation();
     initSimulator();
     renderQuizHTML(document.getElementById('quiz-container'));
 });
+
+function initNavigation() {
+    const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+    const sections = document.querySelectorAll('section[id]');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop - 120;
+            if (window.pageYOffset >= sectionTop) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                link.classList.remove('active');
+                if (href === `#${current}`) {
+                    link.classList.add('active');
+                }
+            }
+        });
+    });
+
+    navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('#')) {
+            link.addEventListener('click', () => {
+                navLinks.forEach(l => {
+                    if (l.getAttribute('href') && l.getAttribute('href').startsWith('#')) {
+                        l.classList.remove('active');
+                    }
+                });
+                link.classList.add('active');
+            });
+        }
+    });
+}
 
 /* =========================================
    1. Simulator Logic
